@@ -37,6 +37,7 @@ class Applications():
             resp = generic_error_handler(err, resp)
 
     def on_get(self, _req, resp):
+        #pylint: disable=no-self-use
         """
             query for applications
         """
@@ -51,18 +52,18 @@ class Applications():
 
             if 'column_label' not in data:
                 raise ValueError("Missing valid query parameters")
-            else:
-                response = requests.get(
-                    url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
-                    headers={
-                        'x-apikey': gsheets.SPREADSHEETS_MICROSERVICE_API_KEY
-                    },
-                    params=data
-                )
-                response.raise_for_status()
 
-                resp.status = falcon.HTTP_200
-                resp.body = response.text
+            response = requests.get(
+                url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
+                headers={
+                    'x-apikey': gsheets.SPREADSHEETS_MICROSERVICE_API_KEY
+                },
+                params=data
+            )
+            response.raise_for_status()
+
+            resp.status = falcon.HTTP_200
+            resp.body = response.text
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
         except ValueError as err:
