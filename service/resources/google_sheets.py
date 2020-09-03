@@ -22,6 +22,14 @@ PROJECT_LOCATION_1 = "PROJECT_LOCATION_1"
 PROJECT_LOCATION_2 = "PROJECT_LOCATION_2"
 FILES_JSON_STRING = "FILES_JSON_STRING"
 
+def get_request_headers():
+    """
+        headers for request to spreadsheets microservice
+    """
+    return {
+        'x-apikey': SPREADSHEETS_MICROSERVICE_API_KEY
+    }
+
 def get_empty_string(submission_json):
     #pylint: disable=unused-argument
     """
@@ -92,7 +100,7 @@ def create_spreadsheets_json():
         "id_column_label": SPREADSHEETS_ID_COL,
     }
 
-ALLOWED_QUERY_MAP = {
+COLUMN_MAP = {
     'actionState': 'B'
 }
 

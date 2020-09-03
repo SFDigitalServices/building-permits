@@ -25,3 +25,13 @@ def http_error_handler(err, resp):
     resp.status = falcon.get_http_status(err.response.status_code)
     resp.body = json.dumps(err.response.json())
     return resp
+
+def value_error_handler(err, resp):
+    """
+        handle ValueError
+    """
+    print("VALUE ERROR:")
+    print("{0}".format(err))
+    resp.status = falcon.HTTP_400
+    resp.body = json.dumps(jsend.error("{0}".format(err)))
+    return resp

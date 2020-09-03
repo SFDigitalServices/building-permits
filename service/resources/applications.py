@@ -3,10 +3,10 @@
 import json
 import requests
 import falcon
-import jsend
 import service.resources.google_sheets as gsheets
-from service.resources.error import generic_error_handler, http_error_handler
+from service.resources.error import generic_error_handler, http_error_handler, value_error_handler
 from .hooks import validate_access
+
 
 @falcon.before(validate_access)
 class Applications():
@@ -24,11 +24,10 @@ class Applications():
 
             response = requests.post(
                 url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
-                headers={
-                    'x-apikey': gsheets.SPREADSHEETS_MICROSERVICE_API_KEY
-                },
+                headers=gsheets.get_request_headers(),
                 json=data
             )
+
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
@@ -37,7 +36,7 @@ class Applications():
             resp = generic_error_handler(err, resp)
 
     def on_get(self, _req, resp):
-        #pylint: disable=no-self-use
+        #pylint: disable=no-self-use, duplicate-code
         """
             query for applications
         """
@@ -45,31 +44,28 @@ class Applications():
             data = gsheets.create_spreadsheets_json()
 
             for param, val in _req.params.items():
-                if param in gsheets.ALLOWED_QUERY_MAP:
+                if param in gsheets.COLUMN_MAP:
                     data['column_label'] = param
                     data['value'] = val
-                    break   #only query on on parameter at the moment
+                    break   #only query on one parameter at the moment
 
             if 'column_label' not in data:
                 raise ValueError("Missing valid query parameters")
 
             response = requests.get(
                 url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
-                headers={
-                    'x-apikey': gsheets.SPREADSHEETS_MICROSERVICE_API_KEY
-                },
+                headers=gsheets.get_request_headers(),
                 params=data
             )
+
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
             resp.body = response.text
+
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
         except ValueError as err:
-            print("VALUE ERROR:")
-            print("{0}".format(err))
-            resp.status = falcon.HTTP_400
-            resp.body = json.dumps(jsend.error("{0}".format(err)))
+            resp = value_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)

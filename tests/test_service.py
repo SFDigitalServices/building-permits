@@ -156,7 +156,7 @@ def test_application_get(mock_env_access_key, client):
         assert response_json == mocks.JSON_OBJ
 
     # error in call to spreadsheets microservice
-    with patch('service.resources.applications.requests.get') as mock_get:
+    with patch('service.resources.application.requests.get') as mock_get:
         mock_response = Mock(status_code=404, text='not found')
         mock_response.json.return_value = 'not found'
         mock_get.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError(
@@ -167,8 +167,51 @@ def test_application_get(mock_env_access_key, client):
         assert response.status_code == 404
 
     # some generic error
-    with patch('service.resources.applications.requests.get') as mock_get:
+    with patch('service.resources.application.requests.get') as mock_get:
         mock_get.side_effect = Exception('some generic error')
 
         response = client.simulate_get('/applications/789')
+        assert response.status_code == 500
+
+def test_application_patch(mock_env_access_key, client):
+    # pylint: disable=unused-argument
+    """
+        Test updating an application
+    """
+    # happy path
+    with patch('service.resources.application.requests.patch') as mock_patch:
+        mock_patch.return_value.text = json.dumps(mocks.PATCH_RESPONSE)
+        mock_patch.return_value.status_code = 200
+
+        response = client.simulate_patch('/applications/123?actionState=Queued%20for%20Bluebeam')
+
+        assert response.status_code == 200
+        response_json = json.loads(response.text)
+        assert response_json == mocks.PATCH_RESPONSE
+
+    # invalid parameter
+    with patch('service.resources.application.requests.patch') as mock_patch:
+        mock_patch.return_value.text = json.dumps(mocks.PATCH_RESPONSE)
+        mock_patch.return_value.status_code = 200
+
+        response = client.simulate_patch('/applications/123?owner=me')
+
+        assert response.status_code == 400
+
+    # error in call to spreadsheets microservice
+    with patch('service.resources.application.requests.patch') as mock_patch:
+        mock_response = Mock(status_code=404, text='not found')
+        mock_response.json.return_value = 'not found'
+        mock_patch.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError(
+            response=mock_response
+        )
+
+        response = client.simulate_patch('/applications/123?actionState=Queued%20for%20Bluebeam')
+        assert response.status_code == 404
+
+    # some generic error
+    with patch('service.resources.application.requests.patch') as mock_patch:
+        mock_patch.side_effect = Exception('some generic error')
+
+        response = client.simulate_patch('/applications/123?actionState=Queued%20for%20Bluebeam')
         assert response.status_code == 500

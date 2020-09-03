@@ -399,3 +399,19 @@ JSON_OBJ = {
     "created":"2020-07-23T19:55:46.744Z",
     "modified":"2020-07-23T19:55:46.745Z"
 }
+
+PATCH_RESPONSE = {
+    "status": "success",
+    "data": {
+        "updates": [
+            {
+                "range": "B15",
+                "values": [
+                    [
+                        "Queued for Bluebeam"
+                    ]
+                ]
+            }
+        ]
+    }
+}
