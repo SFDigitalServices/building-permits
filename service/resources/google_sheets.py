@@ -6,7 +6,6 @@ import json
 SPREADSHEETS_MICROSERVICE_URL = os.environ.get("SPREADSHEETS_MICROSERVICE_URL")
 SPREADSHEETS_MICROSERVICE_API_KEY = os.environ.get("SPREADSHEETS_MICROSERVICE_API_KEY")
 SPREADSHEET_KEY = os.environ.get("SPREADSHEET_KEY")
-WORKSHEET_TITLE = os.environ.get("WORKSHEET_TITLE")
 SPREADSHEETS_ID_COL = "A"
 SPREADSHEETS_BLUEBEAM_ID_COL = "ES"
 SPREADSHEETS_OPTIONAL_UPLOADS_COL = "ET"
@@ -90,13 +89,16 @@ def get_files_links(submission_json):
 
     return ",\n".join(files)
 
-def create_spreadsheets_json():
+def create_spreadsheets_json(worksheet_title=None):
     """
         create base parameters json for spreadsheets api call
     """
+    if worksheet_title is None:
+        raise ValueError('Missing worksheet_title parameter')
+
     return {
         "spreadsheet_key": SPREADSHEET_KEY,
-        "worksheet_title": WORKSHEET_TITLE,
+        "worksheet_title": worksheet_title,
         "id_column_label": SPREADSHEETS_ID_COL,
     }
 

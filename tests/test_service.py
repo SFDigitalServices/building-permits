@@ -73,7 +73,10 @@ def test_applications_post(mock_env_access_key, client):
 
         response = client.simulate_post(
             '/applications',
-            json=mocks.JSON_OBJ
+            json={
+                'worksheet_title': 'DEV',
+                'submission': mocks.JSON_OBJ
+            }
         )
 
         assert response.status_code == 200
@@ -87,10 +90,27 @@ def test_applications_post(mock_env_access_key, client):
 
         response = client.simulate_post(
             '/applications',
-            json=mocks.JSON_OBJ
+            json={
+                'worksheet_title': 'DEV',
+                'submission': mocks.JSON_OBJ
+            }
         )
 
         assert response.status_code == 500
+
+    # missing worksheet_title
+    with patch('service.resources.applications.requests.post') as mock_post:
+        mock_post.return_value.text = json.dumps(jsend.success({'row':[mocks.SINGLE_ROW]}))
+        mock_post.return_value.status_code = 200
+
+        response = client.simulate_post(
+            '/applications',
+            json={
+                'submission': mocks.JSON_OBJ
+            }
+        )
+
+        assert response.status_code == 400
 
 def test_applications_get(mock_env_access_key, client):
     # pylint: disable=unused-argument
@@ -102,7 +122,13 @@ def test_applications_get(mock_env_access_key, client):
         mock_get.return_value.text = json.dumps([mocks.SINGLE_ROW, mocks.SINGLE_ROW])
         mock_get.return_value.status_code = 200
 
-        response = client.simulate_get('/applications?actionState=Queued%20for%20Bluebeam')
+        response = client.simulate_get(
+            '/applications',
+            params={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
 
         assert response.status_code == 200
         response_json = json.loads(response.text)
@@ -114,7 +140,13 @@ def test_applications_get(mock_env_access_key, client):
         mock_get.return_value.text = json.dumps([mocks.SINGLE_ROW, mocks.SINGLE_ROW])
         mock_get.return_value.status_code = 200
 
-        response = client.simulate_get('/applications?admin=true')
+        response = client.simulate_get(
+            '/applications',
+            params={
+                'worksheet_title': 'DEV',
+                'admin': 'me'
+            }
+        )
 
         assert response.status_code == 400
 
@@ -126,7 +158,13 @@ def test_applications_get(mock_env_access_key, client):
             response=mock_response
         )
 
-        response = client.simulate_get('/applications?actionState=Queued%20for%20Bluebeam')
+        response = client.simulate_get(
+            '/applications',
+            params={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
 
         assert response.status_code == 404
 
@@ -134,7 +172,13 @@ def test_applications_get(mock_env_access_key, client):
     with patch('service.resources.applications.requests.get') as mock_get:
         mock_get.side_effect = Exception('some generic error')
 
-        response = client.simulate_get('/applications?actionState=Queued%20for%20Bluebeam')
+        response = client.simulate_get(
+            '/applications',
+            params={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
 
         assert response.status_code == 500
 
@@ -149,7 +193,10 @@ def test_application_get(mock_env_access_key, client):
         mock_get.return_value.json.return_value = mocks.SINGLE_ROW
         mock_get.return_value.status_code = 200
 
-        response = client.simulate_get('/applications/123')
+        response = client.simulate_get(
+            '/applications/123',
+            params={'worksheet_title': 'DEV'}
+        )
 
         assert response.status_code == 200
         response_json = json.loads(response.text)
@@ -163,15 +210,31 @@ def test_application_get(mock_env_access_key, client):
             response=mock_response
         )
 
-        response = client.simulate_get('/applications/456')
+        response = client.simulate_get(
+            '/applications/456',
+            params={'worksheet_title': 'DEV'}
+        )
         assert response.status_code == 404
 
     # some generic error
     with patch('service.resources.application.requests.get') as mock_get:
         mock_get.side_effect = Exception('some generic error')
 
-        response = client.simulate_get('/applications/789')
+        response = client.simulate_get(
+            '/applications/789',
+            params={'worksheet_title': 'DEV'}
+        )
         assert response.status_code == 500
+
+    # missing worksheet_title
+    with patch('service.resources.application.requests.get') as mock_get:
+        mock_get.return_value.json.return_value = mocks.SINGLE_ROW
+        mock_get.return_value.status_code = 200
+
+        response = client.simulate_get(
+            '/applications/123'
+        )
+        assert response.status_code == 400
 
 def test_application_patch(mock_env_access_key, client):
     # pylint: disable=unused-argument
@@ -183,7 +246,13 @@ def test_application_patch(mock_env_access_key, client):
         mock_patch.return_value.text = json.dumps(mocks.PATCH_RESPONSE)
         mock_patch.return_value.status_code = 200
 
-        response = client.simulate_patch('/applications/123?actionState=Queued%20for%20Bluebeam')
+        response = client.simulate_patch(
+            '/applications/123',
+            json={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
 
         assert response.status_code == 200
         response_json = json.loads(response.text)
@@ -194,7 +263,13 @@ def test_application_patch(mock_env_access_key, client):
         mock_patch.return_value.text = json.dumps(mocks.PATCH_RESPONSE)
         mock_patch.return_value.status_code = 200
 
-        response = client.simulate_patch('/applications/123?owner=me')
+        response = client.simulate_patch(
+            '/applications/123',
+            json={
+                'worksheet_title': 'DEV',
+                'owner': 'me'
+            }
+        )
 
         assert response.status_code == 400
 
@@ -206,12 +281,24 @@ def test_application_patch(mock_env_access_key, client):
             response=mock_response
         )
 
-        response = client.simulate_patch('/applications/123?actionState=Queued%20for%20Bluebeam')
+        response = client.simulate_patch(
+            '/applications/123',
+            json={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
         assert response.status_code == 404
 
     # some generic error
     with patch('service.resources.application.requests.patch') as mock_patch:
         mock_patch.side_effect = Exception('some generic error')
 
-        response = client.simulate_patch('/applications/123?actionState=Queued%20for%20Bluebeam')
+        response = client.simulate_patch(
+            '/applications/123',
+            json={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
         assert response.status_code == 500

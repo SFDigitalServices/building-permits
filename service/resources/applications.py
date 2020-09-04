@@ -18,9 +18,10 @@ class Applications():
         """
         try:
             submission_json = json.loads(_req.bounded_stream.read())
+            worksheet_title = submission_json.get('worksheet_title')
+            data = gsheets.create_spreadsheets_json(worksheet_title)
 
-            data = gsheets.create_spreadsheets_json()
-            data["row_values"] = [gsheets.json_to_row(submission_json)]
+            data["row_values"] = [gsheets.json_to_row(submission_json.get('submission'))]
 
             response = requests.post(
                 url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
@@ -32,6 +33,8 @@ class Applications():
 
             resp.status = falcon.HTTP_200
             resp.body = response.text
+        except ValueError as err:
+            resp = value_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)
 
@@ -41,7 +44,8 @@ class Applications():
             query for applications
         """
         try:
-            data = gsheets.create_spreadsheets_json()
+            worksheet_title = _req.get_param('worksheet_title')
+            data = gsheets.create_spreadsheets_json(worksheet_title)
 
             for param, val in _req.params.items():
                 if param in gsheets.COLUMN_MAP:

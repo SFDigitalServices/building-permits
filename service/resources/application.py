@@ -17,7 +17,9 @@ class Application():
         """
         print("Application.on_get")
         try:
-            data = gsheets.create_spreadsheets_json()
+            worksheet_title = _req.get_param("worksheet_title")
+            data = gsheets.create_spreadsheets_json(worksheet_title)
+
             response = requests.get(
                 url='{0}/rows/{1}'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL, submission_id),
                 headers=gsheets.get_request_headers(),
@@ -29,6 +31,8 @@ class Application():
             row = response.json()
             resp.status = falcon.HTTP_200
             resp.body = json.dumps(gsheets.row_to_json(row))
+        except ValueError as err:
+            resp = value_error_handler(err, resp)
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except
@@ -41,9 +45,14 @@ class Application():
         """
         print("Application.on_patch")
         try:
-            data = gsheets.create_spreadsheets_json()
+            request_body = _req.bounded_stream.read()
+            request_params_json = json.loads(request_body)
+
+            worksheet_title = request_params_json.get('worksheet_title')
+            data = gsheets.create_spreadsheets_json(worksheet_title)
+
             data['label_value_map'] = {}
-            for param, val in _req.params.items():
+            for param, val in request_params_json.items():
                 if param in gsheets.COLUMN_MAP:
                     column = gsheets.COLUMN_MAP[param]
                     data['label_value_map'][column] = val

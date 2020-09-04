@@ -8,6 +8,16 @@ import pytest
 import mocks
 import service.resources.google_sheets as gsheets
 
+def test_create_spreadsheets_json():
+    """Test create_spreadsheets_json function"""
+    obj = gsheets.create_spreadsheets_json('worksheet_title')
+    assert bool(obj)
+
+    # missing worksheet_title
+    with pytest.raises(ValueError):
+        obj = gsheets.create_spreadsheets_json()
+
+
 def test_row_to_json():
     """Test row_to_json function"""
     obj = gsheets.row_to_json(mocks.SINGLE_ROW)
