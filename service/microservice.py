@@ -5,6 +5,8 @@ import jsend
 import sentry_sdk
 import falcon
 from .resources.welcome import Welcome
+from .resources.applications import Applications
+from .resources.application import Application
 
 def start_service():
     """Start this service
@@ -15,6 +17,8 @@ def start_service():
     # Initialize Falcon
     api = falcon.API()
     api.add_route('/welcome', Welcome())
+    api.add_route('/applications', Applications())
+    api.add_route('/applications/{submission_id}', Application())
     api.add_sink(default_error, '')
     return api
 

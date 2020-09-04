@@ -1,10 +1,14 @@
 # pylint: disable=redefined-outer-name
 """Tests for microservice"""
 import json
-import jsend
+from unittest.mock import patch, Mock
 import pytest
 from falcon import testing
+import requests
+import jsend
+import mocks
 import service.microservice
+
 
 CLIENT_HEADERS = {
     "ACCESS_KEY": "1234567"
@@ -47,7 +51,6 @@ def test_welcome_no_access_key(client, mock_env_no_access_key):
     response = client.simulate_get('/welcome')
     assert response.status_code == 403
 
-
 def test_default_error(client, mock_env_access_key):
     # pylint: disable=unused-argument
     """Test default error response"""
@@ -57,3 +60,245 @@ def test_default_error(client, mock_env_access_key):
 
     expected_msg_error = jsend.error('404 - Not Found')
     assert json.loads(response.content) == expected_msg_error
+
+def test_applications_post(mock_env_access_key, client):
+    # pylint: disable=unused-argument
+    """
+        Test creation of new application
+    """
+    # happy path
+    with patch('service.resources.applications.requests.post') as mock_post:
+        mock_post.return_value.text = json.dumps(jsend.success({'row':[mocks.SINGLE_ROW]}))
+        mock_post.return_value.status_code = 200
+
+        response = client.simulate_post(
+            '/applications',
+            json={
+                'worksheet_title': 'DEV',
+                'submission': mocks.JSON_OBJ
+            }
+        )
+
+        assert response.status_code == 200
+        response_json = json.loads(response.text)
+        assert response_json['data']['row'][0] == mocks.SINGLE_ROW
+
+    # error in call to spreadsheets microservice
+    with patch('service.resources.applications.requests.post') as mock_post:
+        mock_post.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError
+        mock_post.return_value.status_code = 500
+
+        response = client.simulate_post(
+            '/applications',
+            json={
+                'worksheet_title': 'DEV',
+                'submission': mocks.JSON_OBJ
+            }
+        )
+
+        assert response.status_code == 500
+
+    # missing worksheet_title
+    with patch('service.resources.applications.requests.post') as mock_post:
+        mock_post.return_value.text = json.dumps(jsend.success({'row':[mocks.SINGLE_ROW]}))
+        mock_post.return_value.status_code = 200
+
+        response = client.simulate_post(
+            '/applications',
+            json={
+                'submission': mocks.JSON_OBJ
+            }
+        )
+
+        assert response.status_code == 400
+
+def test_applications_get(mock_env_access_key, client):
+    # pylint: disable=unused-argument
+    """
+        test query endpoint
+    """
+    # happy path
+    with patch('service.resources.applications.requests.get') as mock_get:
+        mock_get.return_value.text = json.dumps([mocks.SINGLE_ROW, mocks.SINGLE_ROW])
+        mock_get.return_value.status_code = 200
+
+        response = client.simulate_get(
+            '/applications',
+            params={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
+
+        assert response.status_code == 200
+        response_json = json.loads(response.text)
+        assert isinstance(response_json, list)
+        assert len(response_json) == 2
+
+    # missing valid query parameter
+    with patch('service.resources.applications.requests.get') as mock_get:
+        mock_get.return_value.text = json.dumps([mocks.SINGLE_ROW, mocks.SINGLE_ROW])
+        mock_get.return_value.status_code = 200
+
+        response = client.simulate_get(
+            '/applications',
+            params={
+                'worksheet_title': 'DEV',
+                'admin': 'me'
+            }
+        )
+
+        assert response.status_code == 400
+
+    # error in spreadsheets api call
+    with patch('service.resources.applications.requests.get') as mock_get:
+        mock_response = Mock(status_code=404, text='not found')
+        mock_response.json.return_value = 'not found'
+        mock_get.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError(
+            response=mock_response
+        )
+
+        response = client.simulate_get(
+            '/applications',
+            params={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
+
+        assert response.status_code == 404
+
+    # some generic error
+    with patch('service.resources.applications.requests.get') as mock_get:
+        mock_get.side_effect = Exception('some generic error')
+
+        response = client.simulate_get(
+            '/applications',
+            params={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
+
+        assert response.status_code == 500
+
+
+def test_application_get(mock_env_access_key, client):
+    # pylint: disable=unused-argument
+    """
+        Test retrieval of an application
+    """
+    # happy path
+    with patch('service.resources.application.requests.get') as mock_get:
+        mock_get.return_value.json.return_value = mocks.SINGLE_ROW
+        mock_get.return_value.status_code = 200
+
+        response = client.simulate_get(
+            '/applications/123',
+            params={'worksheet_title': 'DEV'}
+        )
+
+        assert response.status_code == 200
+        response_json = json.loads(response.text)
+        assert response_json == mocks.JSON_OBJ
+
+    # error in call to spreadsheets microservice
+    with patch('service.resources.application.requests.get') as mock_get:
+        mock_response = Mock(status_code=404, text='not found')
+        mock_response.json.return_value = 'not found'
+        mock_get.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError(
+            response=mock_response
+        )
+
+        response = client.simulate_get(
+            '/applications/456',
+            params={'worksheet_title': 'DEV'}
+        )
+        assert response.status_code == 404
+
+    # some generic error
+    with patch('service.resources.application.requests.get') as mock_get:
+        mock_get.side_effect = Exception('some generic error')
+
+        response = client.simulate_get(
+            '/applications/789',
+            params={'worksheet_title': 'DEV'}
+        )
+        assert response.status_code == 500
+
+    # missing worksheet_title
+    with patch('service.resources.application.requests.get') as mock_get:
+        mock_get.return_value.json.return_value = mocks.SINGLE_ROW
+        mock_get.return_value.status_code = 200
+
+        response = client.simulate_get(
+            '/applications/123'
+        )
+        assert response.status_code == 400
+
+def test_application_patch(mock_env_access_key, client):
+    # pylint: disable=unused-argument
+    """
+        Test updating an application
+    """
+    # happy path
+    with patch('service.resources.application.requests.patch') as mock_patch:
+        mock_patch.return_value.text = json.dumps(mocks.PATCH_RESPONSE)
+        mock_patch.return_value.status_code = 200
+
+        response = client.simulate_patch(
+            '/applications/123',
+            json={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
+
+        assert response.status_code == 200
+        response_json = json.loads(response.text)
+        assert response_json == mocks.PATCH_RESPONSE
+
+    # invalid parameter
+    with patch('service.resources.application.requests.patch') as mock_patch:
+        mock_patch.return_value.text = json.dumps(mocks.PATCH_RESPONSE)
+        mock_patch.return_value.status_code = 200
+
+        response = client.simulate_patch(
+            '/applications/123',
+            json={
+                'worksheet_title': 'DEV',
+                'owner': 'me'
+            }
+        )
+
+        assert response.status_code == 400
+
+    # error in call to spreadsheets microservice
+    with patch('service.resources.application.requests.patch') as mock_patch:
+        mock_response = Mock(status_code=404, text='not found')
+        mock_response.json.return_value = 'not found'
+        mock_patch.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError(
+            response=mock_response
+        )
+
+        response = client.simulate_patch(
+            '/applications/123',
+            json={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
+        assert response.status_code == 404
+
+    # some generic error
+    with patch('service.resources.application.requests.patch') as mock_patch:
+        mock_patch.side_effect = Exception('some generic error')
+
+        response = client.simulate_patch(
+            '/applications/123',
+            json={
+                'worksheet_title': 'DEV',
+                'actionState': 'Queued for Bluebeam'
+            }
+        )
+        assert response.status_code == 500
