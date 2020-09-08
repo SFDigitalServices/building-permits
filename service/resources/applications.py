@@ -3,13 +3,14 @@
 import json
 import requests
 import falcon
+from service.resources.base_application import BaseApplication
 import service.resources.google_sheets as gsheets
 from service.resources.error import generic_error_handler, http_error_handler, value_error_handler
 from .hooks import validate_access
 
 
 @falcon.before(validate_access)
-class Applications():
+class Applications(BaseApplication):
     """Application class"""
     def on_post(self, _req, resp):
         #pylint: disable=no-self-use
@@ -18,8 +19,7 @@ class Applications():
         """
         try:
             submission_json = json.loads(_req.bounded_stream.read())
-            worksheet_title = submission_json.get('worksheet_title')
-            data = gsheets.create_spreadsheets_json(worksheet_title)
+            data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
             data["row_values"] = [gsheets.json_to_row(submission_json.get('submission'))]
 
@@ -33,8 +33,6 @@ class Applications():
 
             resp.status = falcon.HTTP_200
             resp.body = response.text
-        except ValueError as err:
-            resp = value_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)
 
@@ -44,8 +42,7 @@ class Applications():
             query for applications
         """
         try:
-            worksheet_title = _req.get_param('worksheet_title')
-            data = gsheets.create_spreadsheets_json(worksheet_title)
+            data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
             for param, val in _req.params.items():
                 if param in gsheets.COLUMN_MAP:
