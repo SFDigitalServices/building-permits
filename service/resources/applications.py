@@ -21,7 +21,7 @@ class Applications(BaseApplication):
             submission_json = json.loads(_req.bounded_stream.read())
             data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
-            data["row_values"] = [gsheets.json_to_row(submission_json.get('submission'))]
+            data["row_values"] = [gsheets.json_to_row(submission_json)]
 
             response = requests.post(
                 url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),

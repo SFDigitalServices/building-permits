@@ -73,7 +73,7 @@ def test_applications_post(mock_env_access_key, client):
 
         response = client.simulate_post(
             '/applications',
-            json={'submission': mocks.JSON_OBJ}
+            json=mocks.JSON_OBJ
         )
 
         assert response.status_code == 200
@@ -87,7 +87,7 @@ def test_applications_post(mock_env_access_key, client):
 
         response = client.simulate_post(
             '/applications',
-            json={'submission': mocks.JSON_OBJ}
+            json=mocks.JSON_OBJ
         )
 
         assert response.status_code == 500
@@ -99,7 +99,7 @@ def test_applications_post(mock_env_access_key, client):
 
         response = client.simulate_post(
             '/addenda',
-            json={'submission': mocks.JSON_OBJ}
+            json=mocks.JSON_OBJ
         )
 
         assert response.status_code == 200
