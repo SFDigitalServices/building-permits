@@ -1,15 +1,17 @@
 """Applcations module"""
 #pylint: disable=too-few-public-methods
 import json
+import jsend
 import requests
 import falcon
+from service.resources.base_application import BaseApplication
 import service.resources.google_sheets as gsheets
 from service.resources.error import generic_error_handler, http_error_handler, value_error_handler
 from .hooks import validate_access
 
 
 @falcon.before(validate_access)
-class Applications():
+class Applications(BaseApplication):
     """Application class"""
     def on_post(self, _req, resp):
         #pylint: disable=no-self-use
@@ -18,10 +20,9 @@ class Applications():
         """
         try:
             submission_json = json.loads(_req.bounded_stream.read())
-            worksheet_title = submission_json.get('worksheet_title')
-            data = gsheets.create_spreadsheets_json(worksheet_title)
+            data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
-            data["row_values"] = [gsheets.json_to_row(submission_json.get('submission'))]
+            data["row_values"] = [gsheets.json_to_row(submission_json)]
 
             response = requests.post(
                 url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
@@ -32,9 +33,7 @@ class Applications():
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
-            resp.body = response.text
-        except ValueError as err:
-            resp = value_error_handler(err, resp)
+            resp.body = json.dumps(jsend.success())
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)
 
@@ -44,8 +43,7 @@ class Applications():
             query for applications
         """
         try:
-            worksheet_title = _req.get_param('worksheet_title')
-            data = gsheets.create_spreadsheets_json(worksheet_title)
+            data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
             for param, val in _req.params.items():
                 if param in gsheets.COLUMN_MAP:
@@ -65,7 +63,12 @@ class Applications():
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
-            resp.body = response.text
+            # convert array of rows to array of json objs
+            response_json = response.json()
+            results = []
+            for result in response_json:
+                results.append(gsheets.row_to_json(result))
+            resp.body = json.dumps(results)
 
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)

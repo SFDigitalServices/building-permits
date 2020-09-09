@@ -19,6 +19,8 @@ def start_service():
     api.add_route('/welcome', Welcome())
     api.add_route('/applications', Applications())
     api.add_route('/applications/{submission_id}', Application())
+    api.add_route('/addenda', Applications('addenda'))
+    api.add_route('/addenda/{submission_id}', Application('addenda'))
     api.add_sink(default_error, '')
     return api
 
