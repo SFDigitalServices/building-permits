@@ -77,8 +77,6 @@ def test_applications_post(mock_env_access_key, client):
         )
 
         assert response.status_code == 200
-        response_json = json.loads(response.text)
-        assert response_json['data']['row'][0] == mocks.SINGLE_ROW
 
     # error in call to spreadsheets microservice
     with patch('service.resources.applications.requests.post') as mock_post:
@@ -111,7 +109,7 @@ def test_applications_get(mock_env_access_key, client):
     """
     # happy path
     with patch('service.resources.applications.requests.get') as mock_get:
-        mock_get.return_value.text = json.dumps([mocks.SINGLE_ROW, mocks.SINGLE_ROW])
+        mock_get.return_value.json.return_value = [mocks.SINGLE_ROW, mocks.SINGLE_ROW]
         mock_get.return_value.status_code = 200
 
         response = client.simulate_get(
@@ -242,8 +240,6 @@ def test_application_patch(mock_env_access_key, client):
         )
 
         assert response.status_code == 200
-        response_json = json.loads(response.text)
-        assert response_json == mocks.PATCH_RESPONSE
 
     # invalid parameter
     with patch('service.resources.application.requests.patch') as mock_patch:

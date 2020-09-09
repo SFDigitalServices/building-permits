@@ -1,6 +1,7 @@
 """Applcations module"""
 #pylint: disable=too-few-public-methods
 import json
+import jsend
 import requests
 import falcon
 from service.resources.base_application import BaseApplication
@@ -32,7 +33,7 @@ class Applications(BaseApplication):
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
-            resp.body = response.text
+            resp.body = json.dumps(jsend.success())
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)
 
@@ -62,7 +63,12 @@ class Applications(BaseApplication):
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
-            resp.body = response.text
+            # convert array of rows to array of json objs
+            response_json = response.json()
+            results = []
+            for result in response_json:
+                results.append(gsheets.row_to_json(result))
+            resp.body = json.dumps(results)
 
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)

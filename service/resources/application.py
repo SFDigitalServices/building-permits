@@ -1,6 +1,7 @@
 """Application module"""
 #pylint: disable=too-few-public-methods
 import json
+import jsend
 import requests
 import falcon
 from service.resources.base_application import BaseApplication
@@ -66,7 +67,7 @@ class Application(BaseApplication):
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
-            resp.body = response.text
+            resp.body = json.dumps(jsend.success())
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
         except ValueError as err:
