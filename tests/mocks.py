@@ -161,11 +161,19 @@ SINGLE_ROW = [
     "TRUE",
     "2020-07-23T19:49:37.000Z",
     "existingBuildingAddress1",
-    "existingBuildingAddress2",
+    "",
     "https://bucket1.amazonaws.com/A.pdf,\nhttps://bucket1.s3.amazonaws.com/B.pdf,\nhttps://bucket1.amazonaws.com/C.pdf,\nhttps://bucket1.s3.amazonaws.com/D.pdf",
     "[]",
     "TRUE",
-    "FALSE"
+    "FALSE",
+    "23",
+    "",
+    "streetName",
+    "",
+    "",
+    "21",
+    "100",
+    "11111"
 ]
 
 JSON_OBJ = {
@@ -382,8 +390,7 @@ JSON_OBJ = {
         "workersCompRadio":"Have_workers_comp_insurance",
         "iHerebyCertifyCheckBox":"TRUE",
         "dateTime":"2020-07-23T19:49:37.000Z",
-        "projectLocation1":"existingBuildingAddress1",
-        "projectLocation2":"existingBuildingAddress2",
+        "projectLocation2":"",
         "fileLinks":[
             "https://bucket1.amazonaws.com/A.pdf",
             "https://bucket1.s3.amazonaws.com/B.pdf",
@@ -394,7 +401,17 @@ JSON_OBJ = {
         "priorityProjectSelections":{
             "isInDevelopmentAgreement":"TRUE",
             "is100AffordableHousing":"FALSE"
-        }
+        },
+        "projectAddress":"existingBuildingAddress1",
+        "projectAddressNumber":"23",
+        "projectAddressNumberSuffix":"",
+        "projectAddressStreetName":"streetName",
+        "projectAddressStreetType":"",
+        "projectAddressUnitNumber":"",
+        "projectAddressBlock":"21",
+        "projectAddressLot":"100",
+        "projectAddressZip":"11111"
+
     },
     "created":"2020-07-23T19:55:46.744Z",
     "modified":"2020-07-23T19:55:46.745Z"
