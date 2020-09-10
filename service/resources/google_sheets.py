@@ -35,17 +35,17 @@ def get_empty_string(submission_json):
     """
     return ""
 
-def get_location1(submission_json):
-    """
-        wrapper for get_location_values but returns location1 only
-    """
-    return get_location_values(submission_json)[0]
+# def get_location1(submission_json):
+#     """
+#         wrapper for get_location_values but returns location1 only
+#     """
+#     return get_location_values(submission_json)[0]
 
-def get_location2(submission_json):
-    """
-        wrapper for get_location_values but returns location2 only
-    """
-    return get_location_values(submission_json)[1]
+# def get_location2(submission_json):
+#     """
+#         wrapper for get_location_values but returns location2 only
+#     """
+#     return get_location_values(submission_json)[1]
 
 def get_location_values(submission_json):
     """
@@ -55,13 +55,13 @@ def get_location_values(submission_json):
     location1 = None
     location2 = None
     if permit_type == 'existingBuilding':
-        location1 = submission_json['data']['existingBuildingAddress1']
-        location2 = submission_json['data']['existingBuildingAddress2']
+        location1 = submission_json['data'].get('existingBuildingAddress1')
+        location2 = submission_json['data'].get('existingBuildingAddress2')
     elif permit_type == 'newConstruction':
-        location1 = submission_json['data']['newBuildingLocation']
+        location1 = submission_json['data'].get('newBuildingLocation')
     elif permit_type == 'existingPermitApplication':
-        location1 = submission_json['data']['existingProjectAddress1']
-        location2 = submission_json['data']['existingProjectAddress2']
+        location1 = submission_json['data'].get('existingProjectAddress1')
+        location2 = submission_json['data'].get('existingProjectAddress2')
     return location1, location2
 
 def get_files_links(submission_json):
@@ -262,12 +262,20 @@ ROW_JSON_MAP = [
     {'path':['data', 'workersCompRadio']},
     {'path':['data', 'iHerebyCertifyCheckBox']},
     {'path':['data', 'dateTime']},
-    {'path':['data', 'projectLocation1'], 'value':get_location1},
-    {'path':['data', 'projectLocation2'], 'value':get_location2},
+    {'path':['data', 'projectAddress']},
+    {'path':['data', 'projectLocation2'], 'value':get_empty_string},
     {'path':['data', 'fileLinks'], 'value':get_files_links},
     {'path':['data', 'confirmationUploads']},
     {'path':['data', 'priorityProjectSelections', 'isInDevelopmentAgreement']},
-    {'path':['data', 'priorityProjectSelections', 'is100AffordableHousing']}
+    {'path':['data', 'priorityProjectSelections', 'is100AffordableHousing']},
+    {'path':['data', 'projectAddressNumber']},
+    {'path':['data', 'projectAddressNumberSuffix']},
+    {'path':['data', 'projectAddressStreetName']},
+    {'path':['data', 'projectAddressStreetType']},
+    {'path':['data', 'projectAddressUnitNumber']},
+    {'path':['data', 'projectAddressBlock']},
+    {'path':['data', 'projectAddressLot']},
+    {'path':['data', 'projectAddressZip']}
 ]
 
 def get_map():
@@ -297,9 +305,7 @@ def json_to_row(submission_json):
             for prop in path:
                 val = val.get(prop)
                 if val is None:
-                    raise Exception(
-                        "Mapping path element not found in submission json: {0}".format(path)
-                    )
+                    break
 
             if isinstance(val, list):
                 if len(val) > 0:

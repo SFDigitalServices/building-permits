@@ -35,8 +35,8 @@ def test_json_to_row():
     # map _id path is wrong
     with patch('service.resources.google_sheets.get_map') as mock_get_map:
         mock_get_map.return_value = [{'path':['foo', '_id']}]
-        with pytest.raises(Exception):
-            gsheets.json_to_row(mocks.JSON_OBJ)
+        row = gsheets.json_to_row(mocks.JSON_OBJ)
+        assert row == [None]
 
 def test_get_empty_string():
     """Test get_empty_string function"""
