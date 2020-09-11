@@ -47,7 +47,7 @@ class Applications(BaseApplication):
 
             for param, val in _req.params.items():
                 if param in gsheets.COLUMN_MAP:
-                    data['column_label'] = param
+                    data['column_label'] = gsheets.COLUMN_MAP[param]
                     data['value'] = val
                     break   #only query on one parameter at the moment
 
