@@ -32,7 +32,7 @@ class Application(BaseApplication):
 
             row = response.json()
             resp.status = falcon.HTTP_200
-            resp.body = json.dumps(gsheets.row_to_json(row))
+            resp.body = json.dumps(gsheets.row_to_json(self.worksheet_title, row))
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except

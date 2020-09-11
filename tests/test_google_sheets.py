@@ -20,22 +20,38 @@ def test_create_spreadsheets_json():
 
 def test_row_to_json():
     """Test row_to_json function"""
-    obj = gsheets.row_to_json(mocks.SINGLE_ROW)
+
+    # for building permit applications
+    obj = gsheets.row_to_json(gsheets.BUILDING_PERMIT_APPLICATION_WORKSHEET, mocks.SINGLE_ROW)
     # print("obj")
     # pprint.pprint(obj)
     assert obj == mocks.JSON_OBJ
 
+    # for addenda
+    obj = gsheets.row_to_json(gsheets.ADDENDA_APPLICATION_WORKSHEET, mocks.SINGLE_ROW_ADDENDA)
+    assert obj == mocks.JSON_OBJ_ADDENDA
+
 def test_json_to_row():
     """Test json_to_row function"""
-    row = gsheets.json_to_row(mocks.JSON_OBJ)
+
+    # for building permit applications
+    row = gsheets.json_to_row(gsheets.BUILDING_PERMIT_APPLICATION_WORKSHEET, mocks.JSON_OBJ)
     # print("row")
     # pprint.pprint(row)
     assert row == mocks.SINGLE_ROW
 
+    # addenda
+    row = gsheets.json_to_row(gsheets.ADDENDA_APPLICATION_WORKSHEET, mocks.JSON_OBJ_ADDENDA)
+    # print("*****")
+    # print("row: {0}".format(row))
+    # print("*****")
+    # print("row: {0}".format(mocks.SINGLE_ROW_ADDENDA))
+    assert row == mocks.SINGLE_ROW_ADDENDA
+
     # map _id path is wrong
     with patch('service.resources.google_sheets.get_map') as mock_get_map:
         mock_get_map.return_value = [{'path':['foo', '_id']}]
-        row = gsheets.json_to_row(mocks.JSON_OBJ)
+        row = gsheets.json_to_row(gsheets.BUILDING_PERMIT_APPLICATION_WORKSHEET, mocks.JSON_OBJ)
         assert row == [None]
 
 def test_get_empty_string():
