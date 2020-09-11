@@ -60,9 +60,9 @@ class Application(BaseApplication):
                 raise ValueError("Missing valid query parameters")
 
             response = requests.patch(
-                url='{0}/row/{1}'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL, submission_id),
+                url='{0}/rows/{1}'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL, submission_id),
                 headers=gsheets.get_request_headers(),
-                params=data
+                json=data
             )
             response.raise_for_status()
 
