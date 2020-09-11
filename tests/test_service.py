@@ -218,7 +218,7 @@ def test_application_get(mock_env_access_key, client):
 
     # addenda
     with patch('service.resources.application.requests.get') as mock_get:
-        mock_get.return_value.json.return_value = mocks.SINGLE_ROW
+        mock_get.return_value.json.return_value = mocks.SINGLE_ROW_ADDENDA
         mock_get.return_value.status_code = 200
 
         response = client.simulate_get('/addenda/123')

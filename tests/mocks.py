@@ -176,6 +176,53 @@ SINGLE_ROW = [
     "11111"
 ]
 
+SINGLE_ROW_ADDENDA = [
+    "5ed81beb463bc6df71e2500f",
+    "",
+    "",
+    "2020-06-03 02:53 PM PDT",
+    "2020-06-03 02:53 PM PDT",
+    "agent",
+    "Test",
+    "Agent",
+    "(415) 111-1111",
+    "test@test.test",
+    "123 Test Street",
+    "",
+    "San Francisco",
+    "california",
+    "94111",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "12345678",
+    "123 Main Street",
+    "",
+    "94100",
+    "yes",
+    "yes",
+    "yes",
+    "TRUE",
+    "TRUE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "",
+    "12,345,678",
+    "2",
+    "0",
+    "[{\"storage\": \"s3\", \"name\": \"fake_file-9331c51c-70c8-4548-a3cd-ffb154ef5b35.pdf\", \"bucket\": \"bucketeer-5537c4b2-1591-443b-97e3-be39fb46da74\", \"key\": \"formio-live/fake_file-9331c51c-70c8-4548-a3cd-ffb154ef5b35.pdf\", \"url\": \"https://bucketeer-5537c4b2-1591-443b-97e3-be39fb46da74.s3.amazonaws.com/formio-live/fake_file-9331c51c-70c8-4548-a3cd-ffb154ef5b35.pdf\", \"acl\": \"private\", \"size\": 13264, \"type\": \"application/pdf\", \"originalName\": \"fake_file.pdf\"}]",
+    "",
+    "2020-06-03T21:53:13.000Z",
+    "https://ds-files.sfgov.org/formio-live/formio-live/fake_file-9331c51c-70c8-4548-a3cd-ffb154ef5b35.pdf"
+]
+
 JSON_OBJ = {
     "_id":"5f19eb423339194c18c45c7a",
     "data":{
@@ -415,6 +462,69 @@ JSON_OBJ = {
     },
     "created":"2020-07-23T19:55:46.744Z",
     "modified":"2020-07-23T19:55:46.745Z"
+}
+
+JSON_OBJ_ADDENDA = {
+    "_id": "5ed81beb463bc6df71e2500f",
+    "data": {
+        "actionState": "",
+        "bluebeamStatus": "",
+        "applicantType": "agent",
+        "applicantFirstName": "Test",
+        "applicantLastName": "Agent",
+        "applicantPhoneNumber": "(415) 111-1111",
+        "applicantEmail": "test@test.test",
+        "applicantAddress1": "123 Test Street",
+        "applicantAddress2": "",
+        "applicantCity": "San Francisco",
+        "Page2State": "california",
+        "applicantZipCode": "94111",
+        "applicantContractorLicenseNumber": "",
+        "applicantContractorLicenseExpirationDate": "",
+        "applicantBTRC": "",
+        "applicantArchitectLicenseNumber": "",
+        "applicantArchitectLicenseExpirationDate": "",
+        "applicantEngineerLicenseNumber": "",
+        "applicantEngineerLicenseExpirationDate": "",
+        "sitePermitApplicationNumber": "12345678",
+        "existingProjectAddress1": "123 Main Street",
+        "existingProjectAddress2": "",
+        "existingProjectZipCode": "94100",
+        "affordableHousing": "yes",
+        "developmentAgreement": "yes",
+        "accessoryDwellingUnit": "yes",
+        "addendaType": {
+            "grading": "TRUE",
+            "foundation": "TRUE",
+            "shoringAndExcavation": "FALSE",
+            "architectural": "FALSE",
+            "superstructure": "FALSE",
+            "title24EnergyMechanicalElectrical": "FALSE",
+            "other": "FALSE"
+        },
+        "otherAddendaType": "",
+        "addendaNumber": [12, 345, 678],
+        "addendaCount": "2",
+        "bluebeamId": "0",
+        "requiredUploads": [
+            {
+                "storage": "s3",
+                "name": "fake_file-9331c51c-70c8-4548-a3cd-ffb154ef5b35.pdf",
+                "bucket": "bucketeer-5537c4b2-1591-443b-97e3-be39fb46da74",
+                "key": "formio-live/fake_file-9331c51c-70c8-4548-a3cd-ffb154ef5b35.pdf",
+                "url": "https://bucketeer-5537c4b2-1591-443b-97e3-be39fb46da74.s3.amazonaws.com/formio-live/fake_file-9331c51c-70c8-4548-a3cd-ffb154ef5b35.pdf",
+                "acl": "private",
+                "size": 13264,
+                "type": "application/pdf",
+                "originalName": "fake_file.pdf"
+            }
+        ],
+        "applicationNotes": "",
+        "dateTime": "2020-06-03T21:53:13.000Z",
+        "fileLinks": "https://ds-files.sfgov.org/formio-live/formio-live/fake_file-9331c51c-70c8-4548-a3cd-ffb154ef5b35.pdf"
+    },
+    "created": "2020-06-03 02:53 PM PDT",
+    "modified": "2020-06-03 02:53 PM PDT"
 }
 
 PATCH_RESPONSE = {

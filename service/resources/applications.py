@@ -22,7 +22,7 @@ class Applications(BaseApplication):
             submission_json = json.loads(_req.bounded_stream.read())
             data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
-            data["row_values"] = [gsheets.json_to_row(submission_json)]
+            data["row_values"] = [gsheets.json_to_row(self.worksheet_title, submission_json)]
 
             response = requests.post(
                 url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
@@ -67,7 +67,7 @@ class Applications(BaseApplication):
             response_json = response.json()
             results = []
             for result in response_json:
-                results.append(gsheets.row_to_json(result))
+                results.append(gsheets.row_to_json(self.worksheet_title, result))
             resp.body = json.dumps(results)
 
         except requests.HTTPError as err:
