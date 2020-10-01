@@ -96,7 +96,9 @@ def create_spreadsheets_json(worksheet_title=None):
     }
 
 COLUMN_MAP = {
-    'actionState': 'B'
+    'actionState': 'B',
+    'bluebeamStatus': 'C',
+    'ptsStatus': 'D'
 }
 
 ROW_JSON_MAP = {
