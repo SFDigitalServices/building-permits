@@ -93,7 +93,7 @@ SINGLE_ROW = [
     "48",
     "5",
     "0",
-    "mixedUse",
+    "",
     "r2ResidentialApartmentCondominiums,\nmMercantile",
     "no",
     "no",
@@ -103,7 +103,7 @@ SINGLE_ROW = [
     "48",
     "5",
     "0",
-    "mixedUse",
+    "",
     "r2ResidentialApartmentCondominiums,\nmMercantile",
     "",
     "",
@@ -173,7 +173,25 @@ SINGLE_ROW = [
     "",
     "21",
     "100",
-    "11111"
+    "11111",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "a,\nb",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "a,\nb",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "FALSE",
+    "a,\nb"
 ]
 
 SINGLE_ROW_ADDENDA = [
@@ -318,7 +336,17 @@ JSON_OBJ = {
         "existingBuildingDwellingUnits":"48",
         "existingBuildingOccupancyStories":"5",
         "existingBuildingBasementsAndCellars":"0",
-        "existingBuildingPresentUse":"mixedUse",
+        "existingBuildingPresentUse":{
+            "singleFamilyHomeFamilyDwelling1":"FALSE",
+            "duplexOr2UnitBuildingFamilyDwelling2":"FALSE",
+            "apartments":"FALSE",
+            "office":"FALSE",
+            "other":"FALSE"
+        },
+        "existingBuildingPresentUseOther":[
+            "a",
+            "b"
+        ],
         "existingBuildingOccupancyClass":[
             "r2ResidentialApartmentCondominiums",
             "mMercantile"
@@ -331,7 +359,17 @@ JSON_OBJ = {
         "proposedDwellingUnits":"48",
         "proposedOccupancyStories":"5",
         "proposedBasementsAndCellars":"0",
-        "proposedUse":"mixedUse",
+        "proposedUse":{
+            "singleFamilyHomeFamilyDwelling1":"FALSE",
+            "duplexOr2UnitBuildingFamilyDwelling2":"FALSE",
+            "apartments":"FALSE",
+            "office":"FALSE",
+            "other":"FALSE"
+        },
+        "proposedUseOther":[
+            "a",
+            "b"
+        ],
         "occupancyClass":[
             "r2ResidentialApartmentCondominiums",
             "mMercantile"
@@ -347,7 +385,17 @@ JSON_OBJ = {
         "newEstimatedCostOfProject":"",
         "newProjectDescription":"",
         "newTypeOfConstruction":"",
-        "newBuildingUse":"",
+        "newBuildingUse":{
+            "singleFamilyHomeFamilyDwelling1":"FALSE",
+            "duplexOr2UnitBuildingFamilyDwelling2":"FALSE",
+            "apartments":"FALSE",
+            "office":"FALSE",
+            "other":"FALSE"
+        },
+        "newBuildingUseOther":[
+            "a",
+            "b"
+        ],
         "newOccupancyClass":"",
         "newGroundFloorArea":"",
         "newBuildingFrontHeight":"",

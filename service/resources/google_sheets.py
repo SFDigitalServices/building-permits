@@ -1,5 +1,5 @@
 """ Methods for Google Sheets interaction """
-#pylint: disable=too-few-public-methods
+#pylint: disable=too-few-public-methods,line-too-long
 import os
 import json
 
@@ -192,7 +192,7 @@ ROW_JSON_MAP = {
         {'path':['data', 'existingBuildingDwellingUnits']},
         {'path':['data', 'existingBuildingOccupancyStories']},
         {'path':['data', 'existingBuildingBasementsAndCellars']},
-        {'path':['data', 'existingBuildingPresentUse']},
+        {'path':['data', 'existingBuildingPresentUsePlaceholder'], 'value':get_empty_string}, # placeholder for legacy records
         {'path':['data', 'existingBuildingOccupancyClass']},
         {'path':['data', 'sitePermitForm38']},
         {'path':['data', 'noticeOfViolation']},
@@ -202,7 +202,7 @@ ROW_JSON_MAP = {
         {'path':['data', 'proposedDwellingUnits']},
         {'path':['data', 'proposedOccupancyStories']},
         {'path':['data', 'proposedBasementsAndCellars']},
-        {'path':['data', 'proposedUse']},
+        {'path':['data', 'proposedUsePlaceholder'], 'value':get_empty_string}, #placeholder for legacy records
         {'path':['data', 'occupancyClass']},
         {'path':['data', 'constructionLenderName']},
         {'path':['data', 'constructionLenderBranchDesignation']},
@@ -215,7 +215,7 @@ ROW_JSON_MAP = {
         {'path':['data', 'newEstimatedCostOfProject']},
         {'path':['data', 'newProjectDescription']},
         {'path':['data', 'newTypeOfConstruction']},
-        {'path':['data', 'newBuildingUse']},
+        {'path':['data', 'newBuildingUsePlaceholder'], 'value':get_empty_string}, # placeholder for legacy records
         {'path':['data', 'newOccupancyClass']},
         {'path':['data', 'newGroundFloorArea']},
         {'path':['data', 'newBuildingFrontHeight']},
@@ -272,7 +272,25 @@ ROW_JSON_MAP = {
         {'path':['data', 'projectAddressUnitNumber']},
         {'path':['data', 'projectAddressBlock']},
         {'path':['data', 'projectAddressLot']},
-        {'path':['data', 'projectAddressZip']}
+        {'path':['data', 'projectAddressZip']},
+        {'path':['data', 'existingBuildingPresentUse', 'singleFamilyHomeFamilyDwelling1']},
+        {'path':['data', 'existingBuildingPresentUse', 'duplexOr2UnitBuildingFamilyDwelling2']},
+        {'path':['data', 'existingBuildingPresentUse', 'apartments']},
+        {'path':['data', 'existingBuildingPresentUse', 'office']},
+        {'path':['data', 'existingBuildingPresentUse', 'other']},
+        {'path':['data', 'existingBuildingPresentUseOther']},
+        {'path':['data', 'proposedUse', 'singleFamilyHomeFamilyDwelling1']},
+        {'path':['data', 'proposedUse', 'duplexOr2UnitBuildingFamilyDwelling2']},
+        {'path':['data', 'proposedUse', 'apartments']},
+        {'path':['data', 'proposedUse', 'office']},
+        {'path':['data', 'proposedUse', 'other']},
+        {'path':['data', 'proposedUseOther']},
+        {'path':['data', 'newBuildingUse', 'singleFamilyHomeFamilyDwelling1']},
+        {'path':['data', 'newBuildingUse', 'duplexOr2UnitBuildingFamilyDwelling2']},
+        {'path':['data', 'newBuildingUse', 'apartments']},
+        {'path':['data', 'newBuildingUse', 'office']},
+        {'path':['data', 'newBuildingUse', 'other']},
+        {'path':['data', 'newBuildingUseOther']}
     ],
     ADDENDA_APPLICATION_WORKSHEET:[
         {'path':['_id']},
@@ -385,6 +403,11 @@ def row_to_json(worksheet_title, row):
         path = the_map[idx]['path']
         last_path = path[-1]
         current_obj = obj
+
+        # ignore this map item if it's a placeholder
+        # with no value
+        if 'Placeholder' in last_path and val == "":
+            continue
 
         # convert value to array?
         if "LotNumber" in last_path:
