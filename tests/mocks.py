@@ -255,11 +255,13 @@ JSON_OBJ = {
         "applicantLastName":"",
         "applicantPhoneNumber":"",
         "applicantEmail":"",
-        "applicantAddress1":"",
-        "applicantAddress2":"",
-        "applicantCity":"San Francisco",
-        "Page2State":"california",
-        "applicantZipCode":"94124",
+        "applicantAddress":{
+            "line1":"",
+            "line2":"",
+            "city":"San Francisco",
+            "state":"california",
+            "zip":"94124"
+        },
         "applicantContractorLicenseNumber":"",
         "applicantContractorLicenseExpirationDate":"",
         "applicantBTRC":"",
@@ -275,11 +277,13 @@ JSON_OBJ = {
         "ownerName":"",
         "ownerPhoneNumber":"",
         "ownerEmail":"",
-        "ownerAddress1":"",
-        "ownerAddress2":"",
-        "ownerCity":"SAN FRANCISCO",
-        "ownerState":"california",
-        "ownerZipCode":"94133",
+        "ownerAddress":{
+            "line1":"",
+            "line2":"",
+            "city":"SAN FRANCISCO",
+            "state":"california",
+            "zip":"94133"
+        },
         "teamMembers":{
             "agent":"FALSE",
             "architect":"FALSE",
