@@ -557,7 +557,7 @@ JSON_OBJ = {
         "applicantOrganizationName":"applicant org",
         "ownerOrganizationName":"owner org",
         "ownerFirstName":"owner first",
-        "ownerLasttName":"owner last",
+        "ownerLastName":"owner last",
         "agentFirstName":"agent first",
         "agentLastName":"agent last",
         "agentPhoneNumber":"4151111111",

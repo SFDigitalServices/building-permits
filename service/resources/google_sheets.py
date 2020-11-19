@@ -294,7 +294,7 @@ ROW_JSON_MAP = {
         {'path':['data', 'applicantOrganizationName']},
         {'path':['data', 'ownerOrganizationName']},
         {'path':['data', 'ownerFirstName']},
-        {'path':['data', 'ownerLasttName']},
+        {'path':['data', 'ownerLastName']},
         {'path':['data', 'agentFirstName']},
         {'path':['data', 'agentLastName']},
         {'path':['data', 'agentPhoneNumber']},
