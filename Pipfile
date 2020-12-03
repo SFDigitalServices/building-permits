@@ -16,6 +16,9 @@ gunicorn = "*"
 pyjsend = "*"
 sentry-sdk = "*"
 requests = "*"
+sqlalchemy = "*"
+alembic = "*"
+psycopg2 = "*"
 
 [requires]
 python_version = "3.7"

@@ -6,6 +6,8 @@ import requests
 import falcon
 from service.resources.base_application import BaseApplication
 import service.resources.google_sheets as gsheets
+from service.resources.db import create_session
+from service.resources.db_models import create_submission
 from service.resources.error import generic_error_handler, http_error_handler, value_error_handler
 from .hooks import validate_access
 
@@ -20,8 +22,14 @@ class Applications(BaseApplication):
         """
         try:
             submission_json = json.loads(_req.bounded_stream.read())
-            data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
+            # write to db
+            session = create_session()
+            db_session = session()
+            create_submission(db_session, submission_json)
+
+            # write to google sheets
+            data = gsheets.create_spreadsheets_json(self.worksheet_title)
             data["row_values"] = [gsheets.json_to_row(self.worksheet_title, submission_json)]
 
             response = requests.post(

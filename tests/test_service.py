@@ -102,6 +102,21 @@ def test_applications_post(mock_env_access_key, client):
 
         assert response.status_code == 200
 
+    # missing formio.id
+    with patch('service.resources.applications.requests.post') as mock_post:
+        mock_post.return_value.text = json.dumps(jsend.success({'row':[mocks.SINGLE_ROW]}))
+        mock_post.return_value.status_code = 200
+
+        submission_mock = mocks.JSON_OBJ.copy()
+        del submission_mock['_id']
+
+        response = client.simulate_post(
+            '/applications',
+            json=submission_mock
+        )
+
+        assert response.status_code == 500
+
 def test_applications_get(mock_env_access_key, client):
     # pylint: disable=unused-argument
     """
