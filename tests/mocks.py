@@ -239,7 +239,8 @@ SINGLE_ROW = [
     'myself',
     'payor first name',
     'payor last name',
-    'payor@email.com'
+    'payor@email.com',
+    'FALSE'
 ]
 
 SINGLE_ROW_ADDENDA = [
@@ -547,7 +548,8 @@ JSON_OBJ = {
         "confirmationUploads":[],
         "priorityProjectSelections":{
             "isInDevelopmentAgreement":"TRUE",
-            "is100AffordableHousing":"FALSE"
+            "is100AffordableHousing":"FALSE",
+            "isDesignatedInHouseProject":"FALSE"
         },
         "projectAddress":"existingBuildingAddress1",
         "projectAddressNumber":"23",

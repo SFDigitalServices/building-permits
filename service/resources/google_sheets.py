@@ -338,7 +338,8 @@ ROW_JSON_MAP = {
         {'path':['data', 'billingPayor']},
         {'path':['data', 'payorFirstName']},
         {'path':['data', 'payorLastName']},
-        {'path':['data', 'payorEmailAddress']}
+        {'path':['data', 'payorEmailAddress']},
+        {'path':['data', 'priorityProjectSelections', 'isDesignatedInHouseProject']}
     ],
     ADDENDA_APPLICATION_WORKSHEET:[
         {'path':['_id']},
