@@ -334,7 +334,11 @@ ROW_JSON_MAP = {
         {'path':['data', 'engineerAddress', 'line2']},
         {'path':['data', 'engineerAddress', 'city']},
         {'path':['data', 'engineerAddress', 'state']},
-        {'path':['data', 'engineerAddress', 'zip']}
+        {'path':['data', 'engineerAddress', 'zip']},
+        {'path':['data', 'billingPayor']},
+        {'path':['data', 'payorFirstName']},
+        {'path':['data', 'payorLastName']},
+        {'path':['data', 'payorEmailAddress']}
     ],
     ADDENDA_APPLICATION_WORKSHEET:[
         {'path':['_id']},
