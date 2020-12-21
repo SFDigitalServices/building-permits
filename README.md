@@ -10,11 +10,27 @@ Use SFDS Building Permits API for interacting with building permit applications
 
 ## Get started
 
+Install Postgres (if needed)
+*(with Homebrew)*
+> $ brew install postgresql
+
+Create database
+> $ createdb permitting
+
+Set Postgresql and Redis connection string environment variables
+> $ export DATABASE\_URL=postgresql://localhost/permitting
+
 Install Pipenv (if needed)
 > $ pip install --user pipenv
 
 Install included packages
 > $ pipenv install
+
+*If you get a psycopg2 error, it may be due to the install being unable to find openssl libraries installed via homebrew.  Try the following command:*
+> $ env LDFLAGS="-I/usr/local/opt/openssl/include -L/usr/local/opt/openssl/lib" pipenv install --dev
+
+Run DB migrations
+> pipenv run alembic upgrade head
 
 Set ACCESS_KEY environment var and start WSGI Server
 > $ ACCESS_KEY=123456 pipenv run gunicorn 'service.microservice:start_service()'
@@ -40,6 +56,11 @@ Code coverage command with missing statement line numbers
 Set up git hook scripts with pre-commit
 > $ pipenv run pre-commit install
 
+Create a migration
+> alembic revision -m "Add a column"
+
+Run DB migrations
+> alembic upgrade head
 
 ## Continuous integration
 * CircleCI builds fail when trying to run coveralls.
@@ -48,3 +69,5 @@ Set up git hook scripts with pre-commit
 
 ## Heroku Integration
 * Set ACCESS_TOKEN environment variable and pass it as a header in requests
+* Set DATABASE_URL environment variable in the form of postgres://user:password@host:port/dbname?sslmode=require
+  If the username or password contain special characters, they should be urlencoded.
