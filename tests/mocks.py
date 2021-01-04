@@ -235,7 +235,12 @@ SINGLE_ROW = [
     'engineer addr 2',
     'engineer city',
     'engineer state',
-    '11111'
+    '11111',
+    'myself',
+    'payor first name',
+    'payor last name',
+    'payor@email.com',
+    'FALSE'
 ]
 
 SINGLE_ROW_ADDENDA = [
@@ -543,7 +548,8 @@ JSON_OBJ = {
         "confirmationUploads":[],
         "priorityProjectSelections":{
             "isInDevelopmentAgreement":"TRUE",
-            "is100AffordableHousing":"FALSE"
+            "is100AffordableHousing":"FALSE",
+            "isDesignatedInHouseProject":"FALSE"
         },
         "projectAddress":"existingBuildingAddress1",
         "projectAddressNumber":"23",
@@ -608,6 +614,10 @@ JSON_OBJ = {
             "state":"engineer state",
             "zip":"11111"
         },
+        "billingPayor": "myself",
+        "payorEmailAddress": "payor@email.com",
+        "payorFirstName": "payor first name",
+        "payorLastName": "payor last name"
     },
     "created":"2020-07-23T19:55:46.744Z",
     "modified":"2020-07-23T19:55:46.745Z"
