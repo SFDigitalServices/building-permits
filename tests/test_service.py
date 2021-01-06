@@ -92,12 +92,12 @@ def test_applications_post(mock_env_access_key, client):
 
     # addenda post
     with patch('service.resources.applications.requests.post') as mock_post:
-        mock_post.return_value.text = json.dumps(jsend.success({'row':[mocks.SINGLE_ROW]}))
+        mock_post.return_value.text = json.dumps(jsend.success({'row':[mocks.SINGLE_ROW_ADDENDA]}))
         mock_post.return_value.status_code = 200
 
         response = client.simulate_post(
             '/addenda',
-            json=mocks.JSON_OBJ
+            json=mocks.JSON_OBJ_ADDENDA
         )
 
         assert response.status_code == 200
@@ -250,7 +250,7 @@ def test_application_patch(mock_env_access_key, client):
         mock_patch.return_value.status_code = 200
 
         response = client.simulate_patch(
-            '/applications/123',
+            '/applications/5f19eb423339194c18c45c7a',
             json={'actionState': 'Queued for Bluebeam'}
         )
 
@@ -262,7 +262,7 @@ def test_application_patch(mock_env_access_key, client):
         mock_patch.return_value.status_code = 200
 
         response = client.simulate_patch(
-            '/applications/123',
+            '/applications/5f19eb423339194c18c45c7a',
             json={
                 'owner': 'me'
             }
@@ -279,7 +279,7 @@ def test_application_patch(mock_env_access_key, client):
         )
 
         response = client.simulate_patch(
-            '/applications/123',
+            '/applications/5f19eb423339194c18c45c7a',
             json={
                 'actionState': 'Queued for Bluebeam'
             }
@@ -291,7 +291,7 @@ def test_application_patch(mock_env_access_key, client):
         mock_patch.side_effect = Exception('some generic error')
 
         response = client.simulate_patch(
-            '/applications/123',
+            '/applications/5f19eb423339194c18c45c7a',
             json={
                 'actionState': 'Queued for Bluebeam'
             }
@@ -304,7 +304,7 @@ def test_application_patch(mock_env_access_key, client):
         mock_patch.return_value.status_code = 200
 
         response = client.simulate_patch(
-            '/addenda/123',
+            '/addenda/5ed81beb463bc6df71e2500f',
             json={'actionState': 'Queued for Bluebeam'}
         )
 

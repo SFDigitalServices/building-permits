@@ -6,6 +6,8 @@ import requests
 import falcon
 from service.resources.base_application import BaseApplication
 import service.resources.google_sheets as gsheets
+from service.resources.db import create_session
+from service.resources.db_models import SubmissionModel
 from service.resources.error import generic_error_handler, http_error_handler, value_error_handler
 from .hooks import validate_access
 
@@ -48,10 +50,22 @@ class Application(BaseApplication):
             request_body = _req.bounded_stream.read()
             request_params_json = json.loads(request_body)
 
+            # retrieve the submission from db
+            session = create_session()
+            db_session = session()
+            app = db_session.query(SubmissionModel).filter(
+                SubmissionModel.formio_id == submission_id
+                ).first()
+            print("app: {0}".format(app))
+
             data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
             data['label_value_map'] = {}
             for param, val in request_params_json.items():
+                # db
+                app.data[param] = val
+
+                # spreadsheet
                 if param in gsheets.COLUMN_MAP:
                     column = gsheets.COLUMN_MAP[param]
                     data['label_value_map'][column] = val
@@ -59,12 +73,16 @@ class Application(BaseApplication):
             if not bool(data['label_value_map']):
                 raise ValueError("Missing valid query parameters")
 
+            # call api to update spreadsheet
             response = requests.patch(
                 url='{0}/rows/{1}'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL, submission_id),
                 headers=gsheets.get_request_headers(),
                 json=data
             )
             response.raise_for_status()
+
+            # save db changes
+            db_session.commit()
 
             resp.status = falcon.HTTP_200
             resp.body = json.dumps(jsend.success())

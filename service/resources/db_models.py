@@ -28,4 +28,4 @@ def create_submission(db_session, json_data):
 def validate(json_data):
     """enforce validation rules"""
     if '_id' not in json_data:
-        raise Exception("Missing formio.id")
+        raise Exception("Missing formio_id")
