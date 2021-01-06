@@ -206,11 +206,11 @@ ROW_JSON_MAP = {
         {'path':['data', 'occupancyClass']},
         {'path':['data', 'constructionLenderName']},
         {'path':['data', 'constructionLenderBranchDesignation']},
-        {'path':['data', 'constructionLenderAddress1']},
-        {'path':['data', 'constructionLenderAddress2']},
-        {'path':['data', 'constructionLenderCity']},
-        {'path':['data', 'constructionLenderState']},
-        {'path':['data', 'constructionLenderZipCode']},
+        {'path':['data', 'constructionLenderAddressFieldsetExisting', 'constructionLenderAddress1']},
+        {'path':['data', 'constructionLenderAddressFieldsetExisting', 'constructionLenderAddress2']},
+        {'path':['data', 'constructionLenderAddressFieldsetExisting', 'constructionLenderCity']},
+        {'path':['data', 'constructionLenderAddressFieldsetExisting', 'constructionLenderState']},
+        {'path':['data', 'constructionLenderAddressFieldsetExisting', 'constructionLenderZipCode']},
         {'path':['data', 'sitePermitForm12']},
         {'path':['data', 'newEstimatedCostOfProject']},
         {'path':['data', 'newProjectDescription']},
@@ -224,11 +224,11 @@ ROW_JSON_MAP = {
         {'path':['data', 'newBasements']},
         {'path':['data', 'newConstructionLenderName']},
         {'path':['data', 'newConstructionLenderBranchDesignation']},
-        {'path':['data', 'constructionLenderAddress3']},
-        {'path':['data', 'constructionLenderAddress4']},
-        {'path':['data', 'constructionLenderCity1']},
-        {'path':['data', 'constructionLenderState1']},
-        {'path':['data', 'constructionLenderZipCode1']},
+        {'path':['data', 'constructionLenderAddressFieldsetNew', 'constructionLenderAddress3']},
+        {'path':['data', 'constructionLenderAddressFieldsetNew', 'constructionLenderAddress4']},
+        {'path':['data', 'constructionLenderAddressFieldsetNew', 'constructionLenderCity1']},
+        {'path':['data', 'constructionLenderAddressFieldsetNew', 'constructionLenderState1']},
+        {'path':['data', 'constructionLenderAddressFieldsetNew', 'constructionLenderZipCode1']},
         {'path':['data', 'alterOrConstructDriveway']},
         {'path':['data', 'useStreetSpace']},
         {'path':['data', 'electricalWork']},
@@ -273,23 +273,23 @@ ROW_JSON_MAP = {
         {'path':['data', 'projectAddressBlock']},
         {'path':['data', 'projectAddressLot']},
         {'path':['data', 'projectAddressZip']},
-        {'path':['data', 'existingBuildingPresentUse', 'singleFamilyHomeFamilyDwelling1']},
-        {'path':['data', 'existingBuildingPresentUse', 'duplexOr2UnitBuildingFamilyDwelling2']},
-        {'path':['data', 'existingBuildingPresentUse', 'apartments']},
-        {'path':['data', 'existingBuildingPresentUse', 'office']},
-        {'path':['data', 'existingBuildingPresentUse', 'other']},
+        {'path':['data', 'existingBuildingPresentUse', 'singleFamilyHomeFamilyDwelling1'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'existingBuildingPresentUse', 'duplexOr2UnitBuildingFamilyDwelling2'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'existingBuildingPresentUse', 'apartments'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'existingBuildingPresentUse', 'office'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'existingBuildingPresentUse', 'other'], 'value':get_empty_string}, # placeholder for legacy records
         {'path':['data', 'existingBuildingPresentUseOther']},
-        {'path':['data', 'proposedUse', 'singleFamilyHomeFamilyDwelling1']},
-        {'path':['data', 'proposedUse', 'duplexOr2UnitBuildingFamilyDwelling2']},
-        {'path':['data', 'proposedUse', 'apartments']},
-        {'path':['data', 'proposedUse', 'office']},
-        {'path':['data', 'proposedUse', 'other']},
+        {'path':['data', 'proposedUse', 'singleFamilyHomeFamilyDwelling1'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'proposedUse', 'duplexOr2UnitBuildingFamilyDwelling2'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'proposedUse', 'apartments'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'proposedUse', 'office'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'proposedUse', 'other'], 'value':get_empty_string}, # placeholder for legacy records
         {'path':['data', 'proposedUseOther']},
-        {'path':['data', 'newBuildingUse', 'singleFamilyHomeFamilyDwelling1']},
-        {'path':['data', 'newBuildingUse', 'duplexOr2UnitBuildingFamilyDwelling2']},
-        {'path':['data', 'newBuildingUse', 'apartments']},
-        {'path':['data', 'newBuildingUse', 'office']},
-        {'path':['data', 'newBuildingUse', 'other']},
+        {'path':['data', 'newBuildingUse', 'singleFamilyHomeFamilyDwelling1'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'newBuildingUse', 'duplexOr2UnitBuildingFamilyDwelling2'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'newBuildingUse', 'apartments'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'newBuildingUse', 'office'], 'value':get_empty_string}, # placeholder for legacy records
+        {'path':['data', 'newBuildingUse', 'other'], 'value':get_empty_string}, # placeholder for legacy records
         {'path':['data', 'newBuildingUseOther']},
         {'path':['data', 'applicantOrganizationName']},
         {'path':['data', 'ownerOrganizationName']},
