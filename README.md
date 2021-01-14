@@ -57,10 +57,10 @@ Set up git hook scripts with pre-commit
 > $ pipenv run pre-commit install
 
 Create a migration
-> alembic revision -m "Add a column"
+> pipenv run alembic revision -m "Add a column"
 
 Run DB migrations
-> alembic upgrade head
+> pipenv run alembic upgrade head
 
 ## Continuous integration
 * CircleCI builds fail when trying to run coveralls.

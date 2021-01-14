@@ -20,13 +20,14 @@ class Applications(BaseApplication):
         """
             creates a new application
         """
+        session = create_session()
+        db_session = session()
+        db_submission = None
         try:
             submission_json = json.loads(_req.bounded_stream.read())
 
             # write to db
-            session = create_session()
-            db_session = session()
-            create_submission(db_session, submission_json)
+            db_submission = create_submission(db_session, submission_json)
 
             # write to google sheets
             data = gsheets.create_spreadsheets_json(self.worksheet_title)
@@ -43,7 +44,13 @@ class Applications(BaseApplication):
             resp.status = falcon.HTTP_200
             resp.body = json.dumps(jsend.success())
         except Exception as err:    #pylint: disable=broad-except
+            # clean up from db
+            if db_submission is not None:
+                db_session.delete(db_submission)
+
             resp = generic_error_handler(err, resp)
+        finally:
+            db_session.commit()
 
     def on_get(self, _req, resp):
         #pylint: disable=no-self-use, duplicate-code

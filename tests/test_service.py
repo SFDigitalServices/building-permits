@@ -7,12 +7,17 @@ from falcon import testing
 import requests
 import jsend
 import mocks
+from service.resources.db import create_session
+from service.resources.db_models import SubmissionModel
 import service.microservice
 
 
 CLIENT_HEADERS = {
     "ACCESS_KEY": "1234567"
 }
+
+session = create_session() # pylint: disable=invalid-name
+db_session = session() # pylint: disable=invalid-name
 
 @pytest.fixture()
 def client():
@@ -28,6 +33,12 @@ def mock_env_access_key(monkeypatch):
 def mock_env_no_access_key(monkeypatch):
     """ mock environment with no access key """
     monkeypatch.delenv("ACCESS_KEY", raising=False)
+
+def clear_submissions():
+    """ clear out submission table """
+    print("clearing out all submissions in the db...")
+    db_session.query(SubmissionModel).delete()
+    db_session.commit()
 
 def test_welcome(client, mock_env_access_key):
     # pylint: disable=unused-argument
@@ -66,6 +77,8 @@ def test_applications_post(mock_env_access_key, client):
     """
         Test creation of new application
     """
+    clear_submissions()
+
     # happy path
     with patch('service.resources.applications.requests.post') as mock_post:
         mock_post.return_value.text = json.dumps(jsend.success({'row':[mocks.SINGLE_ROW]}))
@@ -78,10 +91,11 @@ def test_applications_post(mock_env_access_key, client):
 
         assert response.status_code == 200
 
-    # error in call to spreadsheets microservice
+    # db unique id error
+    # happy path
     with patch('service.resources.applications.requests.post') as mock_post:
-        mock_post.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError
-        mock_post.return_value.status_code = 500
+        mock_post.return_value.text = json.dumps(jsend.success({'row':[mocks.SINGLE_ROW]}))
+        mock_post.return_value.status_code = 200
 
         response = client.simulate_post(
             '/applications',
@@ -89,6 +103,23 @@ def test_applications_post(mock_env_access_key, client):
         )
 
         assert response.status_code == 500
+
+    # error in call to spreadsheets microservice
+    with patch('service.resources.applications.requests.post') as mock_post:
+        mock_post.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError
+        mock_post.return_value.status_code = 500
+
+        params = mocks.JSON_OBJ.copy()
+        params["_id"] = "permit2"
+        response = client.simulate_post(
+            '/applications',
+            json=params
+        )
+
+        assert response.status_code == 500
+        # check that no new submission added to db
+        submissions = db_session.query(SubmissionModel)
+        assert submissions.count() == 1
 
     # addenda post
     with patch('service.resources.applications.requests.post') as mock_post:
@@ -116,6 +147,9 @@ def test_applications_post(mock_env_access_key, client):
         )
 
         assert response.status_code == 500
+        # check that no new submission added to db
+        submissions = db_session.query(SubmissionModel)
+        assert submissions.count() == 2
 
 def test_applications_get(mock_env_access_key, client):
     # pylint: disable=unused-argument
@@ -244,17 +278,23 @@ def test_application_patch(mock_env_access_key, client):
     """
         Test updating an application
     """
+    formio_id = '5f19eb423339194c18c45c7a'
+    queued_for_bluebeam = 'Queued for Bluebeam'
     # happy path
     with patch('service.resources.application.requests.patch') as mock_patch:
         mock_patch.return_value.text = json.dumps(mocks.PATCH_RESPONSE)
         mock_patch.return_value.status_code = 200
 
         response = client.simulate_patch(
-            '/applications/5f19eb423339194c18c45c7a',
-            json={'actionState': 'Queued for Bluebeam'}
+            '/applications/{0}'.format(formio_id),
+            json={'actionState': queued_for_bluebeam}
         )
 
         assert response.status_code == 200
+        submission = db_session.query(SubmissionModel).filter(
+            SubmissionModel.formio_id == formio_id
+        ).one()
+        assert submission.data['data']['actionState'] == queued_for_bluebeam
 
     # invalid parameter
     with patch('service.resources.application.requests.patch') as mock_patch:
@@ -262,13 +302,17 @@ def test_application_patch(mock_env_access_key, client):
         mock_patch.return_value.status_code = 200
 
         response = client.simulate_patch(
-            '/applications/5f19eb423339194c18c45c7a',
+            '/applications/{0}'.format(formio_id),
             json={
-                'owner': 'me'
+                'ownerName': 'me'
             }
         )
 
-        assert response.status_code == 400
+        assert response.status_code == 500
+        submission = db_session.query(SubmissionModel).filter(
+            SubmissionModel.formio_id == formio_id
+        ).one()
+        assert submission.data['data']['ownerName'] != 'me'
 
     # error in call to spreadsheets microservice
     with patch('service.resources.application.requests.patch') as mock_patch:
@@ -279,24 +323,32 @@ def test_application_patch(mock_env_access_key, client):
         )
 
         response = client.simulate_patch(
-            '/applications/5f19eb423339194c18c45c7a',
+            '/applications/{0}'.format(formio_id),
             json={
-                'actionState': 'Queued for Bluebeam'
+                'actionState': 'test'
             }
         )
-        assert response.status_code == 404
+        assert response.status_code == 500
+        submission = db_session.query(SubmissionModel).filter(
+            SubmissionModel.formio_id == formio_id
+        ).one()
+        assert submission.data['data']['actionState'] != 'test'
 
     # some generic error
     with patch('service.resources.application.requests.patch') as mock_patch:
         mock_patch.side_effect = Exception('some generic error')
 
         response = client.simulate_patch(
-            '/applications/5f19eb423339194c18c45c7a',
+            '/applications/{0}'.format(formio_id),
             json={
-                'actionState': 'Queued for Bluebeam'
+                'actionState': 'test'
             }
         )
         assert response.status_code == 500
+        submission = db_session.query(SubmissionModel).filter(
+            SubmissionModel.formio_id == formio_id
+        ).one()
+        assert submission.data['data']['actionState'] != 'test'
 
     # addenda
     with patch('service.resources.application.requests.patch') as mock_patch:
@@ -305,7 +357,11 @@ def test_application_patch(mock_env_access_key, client):
 
         response = client.simulate_patch(
             '/addenda/5ed81beb463bc6df71e2500f',
-            json={'actionState': 'Queued for Bluebeam'}
+            json={'actionState': queued_for_bluebeam}
         )
 
         assert response.status_code == 200
+        submission = db_session.query(SubmissionModel).filter(
+            SubmissionModel.formio_id == '5ed81beb463bc6df71e2500f'
+        ).one()
+        assert submission.data['data']['actionState'] == queued_for_bluebeam

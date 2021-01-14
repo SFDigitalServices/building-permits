@@ -4,11 +4,12 @@ import json
 import jsend
 import requests
 import falcon
+from sqlalchemy.orm.attributes import flag_modified
 from service.resources.base_application import BaseApplication
 import service.resources.google_sheets as gsheets
 from service.resources.db import create_session
 from service.resources.db_models import SubmissionModel
-from service.resources.error import generic_error_handler, http_error_handler, value_error_handler
+from service.resources.error import generic_error_handler, http_error_handler
 from .hooks import validate_access
 
 @falcon.before(validate_access)
@@ -46,24 +47,26 @@ class Application(BaseApplication):
             update action state of an application
         """
         print("Application.on_patch")
+
+        session = create_session()
+        db_session = session()
+        original_data = None
         try:
             request_body = _req.bounded_stream.read()
             request_params_json = json.loads(request_body)
 
             # retrieve the submission from db
-            session = create_session()
-            db_session = session()
             app = db_session.query(SubmissionModel).filter(
                 SubmissionModel.formio_id == submission_id
                 ).first()
-            print("app: {0}".format(app))
+            original_data = app.data.copy()
 
             data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
             data['label_value_map'] = {}
             for param, val in request_params_json.items():
                 # db
-                app.data[param] = val
+                app.data['data'][param] = val
 
                 # spreadsheet
                 if param in gsheets.COLUMN_MAP:
@@ -81,14 +84,14 @@ class Application(BaseApplication):
             )
             response.raise_for_status()
 
-            # save db changes
-            db_session.commit()
-
+            flag_modified(app, 'data')
             resp.status = falcon.HTTP_200
             resp.body = json.dumps(jsend.success())
-        except requests.HTTPError as err:
-            resp = http_error_handler(err, resp)
-        except ValueError as err:
-            resp = value_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except
+            # undo db edits
+            if original_data is not None:
+                app.data = original_data
+
             resp = generic_error_handler(err, resp)
+        finally:
+            db_session.commit()
