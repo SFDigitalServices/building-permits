@@ -240,7 +240,14 @@ SINGLE_ROW = [
     'payor first name',
     'payor last name',
     'payor@email.com',
-    'FALSE'
+    'FALSE',
+    'FALSE',
+    'FALSE',
+    'FALSE',
+    'TRUE',
+    'FALSE',
+    'carrier',
+    '12345'
 ]
 
 SINGLE_ROW_ADDENDA = [
@@ -621,7 +628,16 @@ JSON_OBJ = {
         "billingPayor": "myself",
         "payorEmailAddress": "payor@email.com",
         "payorFirstName": "payor first name",
-        "payorLastName": "payor last name"
+        "payorLastName": "payor last name",
+        "workersCompSelectboxes":{
+            "Have_certificate_of_consent": "FALSE",
+            "Have_workers_comp_insurance": "FALSE",
+            "Not_subject_to_workers_comp": "FALSE",
+            "Will_comply_with_all_laws/ordinances": "TRUE",
+            "Work_less_than_$100": "FALSE"
+        },
+        "carrier": "carrier",
+        "policyNumber": "12345"
     },
     "created":"2020-07-23T19:55:46.744Z",
     "modified":"2020-07-23T19:55:46.745Z"
