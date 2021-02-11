@@ -339,7 +339,14 @@ ROW_JSON_MAP = {
         {'path':['data', 'payorFirstName']},
         {'path':['data', 'payorLastName']},
         {'path':['data', 'payorEmailAddress']},
-        {'path':['data', 'priorityProjectSelections', 'isDesignatedInHouseProject']}
+        {'path':['data', 'priorityProjectSelections', 'isDesignatedInHouseProject']},
+        {'path':['data', 'workersCompSelectboxes', 'Have_certificate_of_consent']},
+        {'path':['data', 'workersCompSelectboxes', 'Have_workers_comp_insurance']},
+        {'path':['data', 'workersCompSelectboxes', 'Not_subject_to_workers_comp']},
+        {'path':['data', 'workersCompSelectboxes', 'Will_comply_with_all_laws/ordinances']},
+        {'path':['data', 'workersCompSelectboxes', 'Work_less_than_$100']},
+        {'path':['data', 'carrier']},
+        {'path':['data', 'policyNumber']}
     ],
     ADDENDA_APPLICATION_WORKSHEET:[
         {'path':['_id']},
