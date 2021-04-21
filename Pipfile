@@ -16,6 +16,7 @@ gunicorn = "*"
 pyjsend = "*"
 sentry-sdk = "*"
 requests = "*"
+celery = "*"
 
 [requires]
 python_version = "3.7"

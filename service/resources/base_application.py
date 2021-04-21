@@ -7,6 +7,7 @@ class BaseApplication():
     # pylint: disable=too-few-public-methods
 
     def __init__(self, application_type='buildingPermitApplication'):
+        self.application_type = application_type
         if application_type == 'addenda':
             self.worksheet_title = gsheets.ADDENDA_APPLICATION_WORKSHEET
         else:

@@ -1,0 +1,21 @@
+{
+    "addons": [
+        {
+        "plan": "heroku-redis:hobby-dev"
+        },
+        {
+        "plan": "papertrail:choklad"
+        }
+    ],
+    "buildpacks": [
+        {
+        "url": "heroku/python"
+        }
+    ],
+    "env": {
+    },
+    "formation": {
+    },
+    "name": "building-permits-applications",
+    "stack": "heroku-18"
+}

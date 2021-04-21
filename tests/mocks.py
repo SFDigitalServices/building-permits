@@ -1,5 +1,5 @@
 """Mock objects for testing"""
-#pylint: disable=line-too-long
+#pylint: disable=line-too-long,too-many-lines
 
 PERMIT_TYPES = ["existingBuilding", "newConstruction", "existingPermitApplication"]
 
@@ -720,4 +720,16 @@ PATCH_RESPONSE = {
             }
         ]
     }
+}
+
+BLUEBEAM_SUCCESS_CALLBACK_PAYLOAD = {
+    "status": "success",
+    "data": {
+        "bluebeam_project_id": "1234ABCD"
+    }
+}
+
+BLUEBEAM_ERROR_CALLBACK_PAYLOAD = {
+    "status": "error",
+    "message": "I'm sorry Dave, I'm afraid can't do that."
 }

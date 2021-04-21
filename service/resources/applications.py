@@ -33,7 +33,7 @@ class Applications(BaseApplication):
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
-            resp.body = json.dumps(jsend.success())
+            resp.text = json.dumps(jsend.success())
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)
 
@@ -43,14 +43,9 @@ class Applications(BaseApplication):
             query for applications
         """
         try:
-            query_result = self.perform_query(_req.params.items())
+            results = self.perform_query(_req.params)
             resp.status = falcon.HTTP_200
-
-            # convert array of rows to array of json objs
-            results = []
-            for result in query_result:
-                results.append(gsheets.row_to_json(self.worksheet_title, result))
-            resp.body = json.dumps(results)
+            resp.text = json.dumps(results)
 
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
@@ -65,7 +60,7 @@ class Applications(BaseApplication):
         """
         data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
-        for param, val in params:
+        for param, val in params.items():
             if param in gsheets.COLUMN_MAP:
                 data['column_label'] = gsheets.COLUMN_MAP[param]
                 data['value'] = val
@@ -81,4 +76,10 @@ class Applications(BaseApplication):
         )
 
         response.raise_for_status()
-        return response.json()
+
+        # convert array of rows to array of json objs
+        response_json = response.json()
+        results = []
+        for result in response_json:
+            results.append(gsheets.row_to_json(self.worksheet_title, result))
+        return results
