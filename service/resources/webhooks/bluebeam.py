@@ -11,7 +11,7 @@ from service.resources.hooks import validate_access
 class BluebeamWebhook():
     """ Bluebeam Webhook class """
 
-    def on_get(self, _req, resp):
+    def on_post(self, _req, resp):
         #pylint: disable=no-self-use,no-member,unused-argument
         """
             bluebeam webook

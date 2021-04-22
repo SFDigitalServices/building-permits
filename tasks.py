@@ -31,7 +31,7 @@ def scheduler(self):
     try:
         building_permit_applications = Applications()
         applications_to_export = building_permit_applications.perform_query({
-            'actionState':os.environ.get('BUILDING_PERMITS_API_KEY')
+            'actionState': 'Queued for Bluebeam'
         })
 
         project_users = []
@@ -61,7 +61,7 @@ def scheduler(self):
                     '{0}/submission'.format(
                         os.environ.get('BLUEBEAM_MICROSERVICE_URL').rstrip('/')),
                     headers={'x-apikey':os.environ.get('BLUEBEAM_MICROSERVICE_API_KEY')},
-                    params=params
+                    json=params
                 )
                 submission_response.raise_for_status()
             except requests.HTTPError as err:

@@ -280,8 +280,9 @@ def test_bluebeam_webhook_success(mock_data_update, mock_env_access_key, client)
     """
         Test bluebeam webhook endpoint with success message
     """
+    print("begin test_bluebeam_webhook_success")
     mock_data_update.return_value.status_code = 200
-    response = client.simulate_get(
+    response = client.simulate_post(
         '/webhooks/bluebeam',
         params={
             'type': 'buildingPermitApplication', # or addenda.  defined in base_application
@@ -305,8 +306,9 @@ def test_bluebeam_webhook_error(mock_data_update, mock_env_access_key, client):
     """
         Test bluebeam webhook endpoint with error message
     """
+    print("begin test_bluebeam_webhook_error")
     mock_data_update.return_value.status_code = 200
-    response = client.simulate_get(
+    response = client.simulate_post(
         '/webhooks/bluebeam',
         params={
             'type': 'addenda',
@@ -330,8 +332,9 @@ def test_bluebeam_webhook_data_update_error(mock_data_update, mock_env_access_ke
     """
         Test bluebeam webhook endpoint handling of error when updating data
     """
+    print("begin test_bluebeam_webhook_data_update_error")
     mock_data_update.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError
-    response = client.simulate_get(
+    response = client.simulate_post(
         '/webhooks/bluebeam',
         params={
             'type': 'addenda',

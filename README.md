@@ -16,10 +16,16 @@ Install Pipenv (if needed)
 Install included packages
 > $ pipenv install
 
+Set environment variables which are listed in the .env.example file
+
 Set ACCESS_KEY environment var and start WSGI Server
 > $ ACCESS_KEY=123456 pipenv run gunicorn 'service.microservice:start_service()'
 
-Set environment variables which are listed in the .env.example file
+Run celery worker
+> $ pipenv run celery worker
+
+Start celery beat work
+> $ pipenv run celery -A tasks beat --loglevel=info
 
 Run Pytest
 > $ pipenv run python -m pytest

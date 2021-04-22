@@ -72,7 +72,7 @@ class Applications(BaseApplication):
         response = requests.get(
             url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
             headers=gsheets.get_request_headers(),
-            params=params
+            params=data
         )
 
         response.raise_for_status()
