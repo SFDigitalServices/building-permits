@@ -8,7 +8,10 @@ jobs:
     docker:
       # specify the version you desire here
       # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      - image: circleci/python:3.7.2
+      - image: circleci/python:3.9.1
+        environment:
+          REDIS_URL: redis://redis@127.0.0.1:6379
+      - image: circleci/redis:6.0.9
       
       # Specify service dependencies here if necessary
       # CircleCI maintains a library of pre-built images

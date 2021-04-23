@@ -33,7 +33,7 @@ class Applications(BaseApplication):
             response.raise_for_status()
 
             resp.status = falcon.HTTP_200
-            resp.body = json.dumps(jsend.success())
+            resp.text = json.dumps(jsend.success())
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)
 
@@ -43,32 +43,9 @@ class Applications(BaseApplication):
             query for applications
         """
         try:
-            data = gsheets.create_spreadsheets_json(self.worksheet_title)
-
-            for param, val in _req.params.items():
-                if param in gsheets.COLUMN_MAP:
-                    data['column_label'] = gsheets.COLUMN_MAP[param]
-                    data['value'] = val
-                    break   #only query on one parameter at the moment
-
-            if 'column_label' not in data:
-                raise ValueError("Missing valid query parameters")
-
-            response = requests.get(
-                url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
-                headers=gsheets.get_request_headers(),
-                params=data
-            )
-
-            response.raise_for_status()
-
+            results = self.perform_query(_req.params)
             resp.status = falcon.HTTP_200
-            # convert array of rows to array of json objs
-            response_json = response.json()
-            results = []
-            for result in response_json:
-                results.append(gsheets.row_to_json(self.worksheet_title, result))
-            resp.body = json.dumps(results)
+            resp.text = json.dumps(results)
 
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
@@ -76,3 +53,33 @@ class Applications(BaseApplication):
             resp = value_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)
+
+    def perform_query(self, params):
+        """
+            run the query
+        """
+        data = gsheets.create_spreadsheets_json(self.worksheet_title)
+
+        for param, val in params.items():
+            if param in gsheets.COLUMN_MAP:
+                data['column_label'] = gsheets.COLUMN_MAP[param]
+                data['value'] = val
+                break   #only query on one parameter at the moment
+
+        if 'column_label' not in data:
+            raise ValueError("Missing valid query parameters")
+
+        response = requests.get(
+            url='{0}/rows'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL),
+            headers=gsheets.get_request_headers(),
+            params=data
+        )
+
+        response.raise_for_status()
+
+        # convert array of rows to array of json objs
+        response_json = response.json()
+        results = []
+        for result in response_json:
+            results.append(gsheets.row_to_json(self.worksheet_title, result))
+        return results

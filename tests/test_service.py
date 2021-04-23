@@ -2,32 +2,11 @@
 """Tests for microservice"""
 import json
 from unittest.mock import patch, Mock
-import pytest
 from falcon import testing
 import requests
 import jsend
-import mocks
+import tests.mocks as mocks
 import service.microservice
-
-
-CLIENT_HEADERS = {
-    "ACCESS_KEY": "1234567"
-}
-
-@pytest.fixture()
-def client():
-    """ client fixture """
-    return testing.TestClient(app=service.microservice.start_service(), headers=CLIENT_HEADERS)
-
-@pytest.fixture
-def mock_env_access_key(monkeypatch):
-    """ mock environment access key """
-    monkeypatch.setenv("ACCESS_KEY", CLIENT_HEADERS["ACCESS_KEY"])
-
-@pytest.fixture
-def mock_env_no_access_key(monkeypatch):
-    """ mock environment with no access key """
-    monkeypatch.delenv("ACCESS_KEY", raising=False)
 
 def test_welcome(client, mock_env_access_key):
     # pylint: disable=unused-argument
@@ -294,3 +273,81 @@ def test_application_patch(mock_env_access_key, client):
         )
 
         assert response.status_code == 200
+
+@patch('service.resources.applications.requests.patch')
+def test_bluebeam_webhook_success(mock_data_update, mock_env_access_key, client):
+    # pylint: disable=unused-argument
+    """
+        Test bluebeam webhook endpoint with success message
+    """
+    print("begin test_bluebeam_webhook_success")
+    mock_data_update.return_value.status_code = 200
+    response = client.simulate_post(
+        '/webhooks/bluebeam',
+        params={
+            'type': 'buildingPermitApplication', # or addenda.  defined in base_application
+            'submission_id': '00001'
+        },
+        json=mocks.BLUEBEAM_SUCCESS_CALLBACK_PAYLOAD
+    )
+
+    assert response.status_code == 200
+    assert mock_data_update.called_once_with(
+        submission_id='00001',
+        params={
+            'actionState': 'Done',
+            'bluebeam_project_id': '1234ABCD'
+        }
+    )
+
+@patch('service.resources.applications.requests.patch')
+def test_bluebeam_webhook_error(mock_data_update, mock_env_access_key, client):
+    # pylint: disable=unused-argument
+    """
+        Test bluebeam webhook endpoint with error message
+    """
+    print("begin test_bluebeam_webhook_error")
+    mock_data_update.return_value.status_code = 200
+    response = client.simulate_post(
+        '/webhooks/bluebeam',
+        params={
+            'type': 'addenda',
+            'submission_id': '007'
+        },
+        json=mocks.BLUEBEAM_ERROR_CALLBACK_PAYLOAD
+    )
+
+    assert response.status_code == 200
+    assert mock_data_update.called_once_with(
+        submission_id='007',
+        params={
+            'actionState': 'error',
+            'message': "I'm sorry Dave, I'm afraid can't do that."
+        }
+    )
+
+@patch('service.resources.applications.requests.patch')
+def test_bluebeam_webhook_data_update_error(mock_data_update, mock_env_access_key, client):
+    # pylint: disable=unused-argument
+    """
+        Test bluebeam webhook endpoint handling of error when updating data
+    """
+    print("begin test_bluebeam_webhook_data_update_error")
+    mock_data_update.return_value.raise_for_status.side_effect = requests.exceptions.HTTPError
+    response = client.simulate_post(
+        '/webhooks/bluebeam',
+        params={
+            'type': 'addenda',
+            'submission_id': '007'
+        },
+        json=mocks.BLUEBEAM_ERROR_CALLBACK_PAYLOAD
+    )
+
+    assert response.status_code == 500
+    assert mock_data_update.called_once_with(
+        submission_id='007',
+        params={
+            'actionState': 'error',
+            'message': "I'm sorry Dave, I'm afraid can't do that."
+        }
+    )

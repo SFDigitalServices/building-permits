@@ -5,7 +5,7 @@
 from unittest.mock import patch
 import copy
 import pytest
-import mocks
+import tests.mocks as mocks
 import service.resources.google_sheets as gsheets
 
 def test_create_spreadsheets_json():

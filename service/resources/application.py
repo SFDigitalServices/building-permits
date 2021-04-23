@@ -32,7 +32,7 @@ class Application(BaseApplication):
 
             row = response.json()
             resp.status = falcon.HTTP_200
-            resp.body = json.dumps(gsheets.row_to_json(self.worksheet_title, row))
+            resp.text = json.dumps(gsheets.row_to_json(self.worksheet_title, row))
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except
@@ -48,29 +48,35 @@ class Application(BaseApplication):
             request_body = _req.bounded_stream.read()
             request_params_json = json.loads(request_body)
 
-            data = gsheets.create_spreadsheets_json(self.worksheet_title)
-
-            data['label_value_map'] = {}
-            for param, val in request_params_json.items():
-                if param in gsheets.COLUMN_MAP:
-                    column = gsheets.COLUMN_MAP[param]
-                    data['label_value_map'][column] = val
-
-            if not bool(data['label_value_map']):
-                raise ValueError("Missing valid query parameters")
-
-            response = requests.patch(
-                url='{0}/rows/{1}'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL, submission_id),
-                headers=gsheets.get_request_headers(),
-                json=data
-            )
-            response.raise_for_status()
+            self.update(submission_id, request_params_json)
 
             resp.status = falcon.HTTP_200
-            resp.body = json.dumps(jsend.success())
+            resp.text = json.dumps(jsend.success())
         except requests.HTTPError as err:
             resp = http_error_handler(err, resp)
         except ValueError as err:
             resp = value_error_handler(err, resp)
         except Exception as err:    #pylint: disable=broad-except
             resp = generic_error_handler(err, resp)
+
+    def update(self, submission_id, params):
+        """
+            update the matching application
+        """
+        data = gsheets.create_spreadsheets_json(self.worksheet_title)
+
+        data['label_value_map'] = {}
+        for param, val in params.items():
+            if param in gsheets.COLUMN_MAP:
+                column = gsheets.COLUMN_MAP[param]
+                data['label_value_map'][column] = val
+
+        if not bool(data['label_value_map']):
+            raise ValueError("Missing valid query parameters")
+
+        response = requests.patch(
+            url='{0}/rows/{1}'.format(gsheets.SPREADSHEETS_MICROSERVICE_URL, submission_id),
+            headers=gsheets.get_request_headers(),
+            json=data
+        )
+        response.raise_for_status()

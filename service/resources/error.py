@@ -13,7 +13,7 @@ def generic_error_handler(err, resp):
     print("{0}".format(err))
     print(traceback.format_exc())
     resp.status = falcon.HTTP_500
-    resp.body = json.dumps(jsend.error("{0}".format(err)))
+    resp.text = json.dumps(jsend.error("{0}".format(err)))
     return resp
 
 def http_error_handler(err, resp):
@@ -22,8 +22,8 @@ def http_error_handler(err, resp):
     """
     print("HTTPError:")
     print("{0} {1}".format(err.response.status_code, err.response.text))
-    resp.status = falcon.get_http_status(err.response.status_code)
-    resp.body = json.dumps(err.response.json())
+    resp.status = falcon.code_to_http_status(err.response.status_code)
+    resp.text = json.dumps(err.response.json())
     return resp
 
 def value_error_handler(err, resp):
@@ -33,5 +33,5 @@ def value_error_handler(err, resp):
     print("VALUE ERROR:")
     print("{0}".format(err))
     resp.status = falcon.HTTP_400
-    resp.body = json.dumps(jsend.error("{0}".format(err)))
+    resp.text = json.dumps(jsend.error("{0}".format(err)))
     return resp
