@@ -1,5 +1,5 @@
 """Applcations module"""
-#pylint: disable=too-few-public-methods
+#pylint: disable=too-few-public-methods,no-member
 import json
 import jsend
 import requests
@@ -20,6 +20,7 @@ class Applications(BaseApplication):
         """
         try:
             submission_json = json.loads(_req.bounded_stream.read())
+            print(f"submission_json: {submission_json}")
             data = gsheets.create_spreadsheets_json(self.worksheet_title)
 
             data["row_values"] = [gsheets.json_to_row(self.worksheet_title, submission_json)]
